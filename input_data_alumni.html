@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Data Alumni - ANTEKHUB FT-UH</title>
+    <link rel="stylesheet" href="input_data_alumni.css">
+    <!-- Library Excel tidak diperlukan lagi karena pemrosesan di server -->
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+            <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+            <h1 class="header-title">ANTEKHUB FT-UH</h1>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+            <img src="img/Logout.png" alt="Logout Icon" class="logout-icon">
+            LOGOUT
+        </button>
+    </header>
+
+    <!-- Navbar Horizontal -->
+    <nav class="navbar">
+        <button class="navbar-btn" id="menuUtamaBtn">
+            <img src="img/menu.png" alt="Menu Icon" class="navbar-icon">
+            MENU UTAMA
+        </button>
+        <button class="navbar-btn active" id="inputDataBtn">
+            <img src="img/input data.png" alt="Input Icon" class="navbar-icon">
+            Input Data Alumni
+        </button>
+        <button class="navbar-btn" id="dataAlumniBtn">
+            <img src="img/data alumni.png" alt="Data Icon" class="navbar-icon">
+            DATA ALUMNI
+        </button>
+        <button class="navbar-btn" id="infoAlumniBtn">
+            <img src="img/info alumni.png" alt="Info Icon" class="navbar-icon">
+            INFO ALUMNI
+        </button>
+        <button class="navbar-btn" id="akunAdminBtn">
+            <img src="img/akun admin.png" alt="Admin Icon" class="navbar-icon">
+            AKUN ADMIN
+        </button>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Main Content -->
+        <main class="content">
+            <div class="content-header">
+                <img src="img/input data.png" alt="Input Icon" class="content-icon">
+                <h2>INPUT DATA ALUMNI</h2>
+            </div>
+
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <p class="upload-text">Pastikan File yang diupload dalam format (Excel) .xlsx</p>
+                    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                    <button class="choose-file-btn" id="chooseFileBtn">Pilih File Excel</button>
+                    <p class="file-name" id="fileName"></p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-cancel" id="batalBtn">Batal ✕</button>
+                    <button class="btn btn-save" id="previewBtn">Preview ✓</button>
+                    <button class="btn btn-manual" id="inputManualBtn" style="display: none;">Input Manual Alumni</button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-container" id="previewSection" style="display: none;">
+                <h3>Preview Data Excel</h3>
+                <div id="previewContent"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-cancel" id="cancelPreviewBtn">Batal</button>
+                    <button class="btn btn-save" id="commitBtn">Commit & Upload</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        // Elemen-elemen utama
+        const fileInput = document.getElementById('fileInput');
+        const chooseFileBtn = document.getElementById('chooseFileBtn');
+        const fileName = document.getElementById('fileName');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewBtn = document.getElementById('previewBtn');
+        const previewSection = document.getElementById('previewSection');
+        const previewContent = document.getElementById('previewContent');
+        const cancelPreviewBtn = document.getElementById('cancelPreviewBtn');
+        const commitBtn = document.getElementById('commitBtn');
+
+        let currentRunId = null;
+        let currentSheets = [];
+        let currentData = null;  // Simpan data respons untuk switch sheet
+
+        // Pilih file manual
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
+
+        // Validasi file saat dipilih
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const ext = file.name.split('.').pop().toLowerCase();
+
+                if (ext === 'xlsx' || ext === 'xls') {
+                    fileName.textContent = `File terpilih: ${file.name}`;
+                    fileName.style.color = '#2ecc71';
+                    uploadArea.style.borderColor = '#2ecc71';
+                    fileName.classList.add('show');
+                } else {
+                    fileName.textContent = 'Format file tidak valid! Gunakan file .xlsx atau .xls';
+                    fileName.style.color = '#e74c3c';
+                    uploadArea.style.borderColor = '#e74c3c';
+                    fileName.classList.add('show');
+                    this.value = '';
+                }
+            }
+        });
+
+        // Fungsi drag & drop
+        uploadArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#4a90e2';
+            uploadArea.style.backgroundColor = 'rgba(74,144,226,0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.backgroundColor = 'transparent';
+        });
+
+        uploadArea.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.backgroundColor = 'transparent';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                const ext = file.name.split('.').pop().toLowerCase();
+
+                if (ext === 'xlsx' || ext === 'xls') {
+                    fileInput.files = files;
+                    fileName.textContent = `File terpilih: ${file.name}`;
+                    fileName.style.color = '#2ecc71';
+                    uploadArea.style.borderColor = '#2ecc71';
+                } else {
+                    fileName.textContent = 'Format file tidak valid! Gunakan file .xlsx atau .xls';
+                    fileName.style.color = '#e74c3c';
+                    uploadArea.style.borderColor = '#e74c3c';
+                }
+            }
+        });
+
+        // Tombol PREVIEW
+        previewBtn.addEventListener('click', async function () {
+            if (fileInput.files.length === 0) {
+                alert('Silakan pilih file terlebih dahulu!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            await previewExcel(file);
+        });
+
+        // Tombol CANCEL PREVIEW
+        cancelPreviewBtn.addEventListener('click', function () {
+            previewSection.style.display = 'none';
+            previewContent.innerHTML = '';
+            currentRunId = null;
+            currentSheets = [];
+            currentData = null;
+        });
+
+        // Tombol COMMIT
+        commitBtn.addEventListener('click', async function () {
+            if (!currentRunId || currentSheets.length === 0) {
+                alert('Tidak ada data untuk di-commit!');
+                return;
+            }
+
+            if (confirm('Apakah Anda yakin ingin mengupload data ini?')) {
+                await commitExcel(currentRunId, currentSheets);
+            }
+        });
+
+        // Fungsi Preview
+        
+        async function previewExcel(file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('http://localhost:3000/api/alumni/imports/preview', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Preview gagal: ${response.status} - ${errorText}`);
+                }
+
+                // Clone respons untuk logging teks mentah sebelum json()
+                const responseClone = response.clone();
+                const rawText = await responseClone.text();
+
+                const result = await response.json();
+
+                // Logging detail untuk debugging
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                console.log('Raw response text:', rawText);
+                console.log('Parsed result:', result);
+                console.log('result.data:', result.data);
+                console.log('result.data.run_id:', result.data?.run_id);
+                console.log('result.data.sheets:', result.data?.sheets);
+                console.log('result.data.sheets.length:', result.data?.sheets?.length);
+
+                console.log('Preview result:', result);
+
+                // Validasi struktur respons berdasarkan respons aktual server
+                if (!result.data || !result.data.run_id || !result.data.sheets || result.data.sheets.length === 0) {
+                    throw new Error('Struktur respons preview tidak valid. Respons server tidak memiliki data.run_id atau sheets.');
+                }
+
+                // Periksa jika sheet pertama memiliki rows
+                const firstSheet = result.data.sheets[0];
+                if (!firstSheet.rows || firstSheet.rows.length === 0) {
+                    throw new Error('File Excel tidak memiliki data yang valid (rows kosong).');
+                }
+
+                // Simpan data untuk commit dan switch sheet
+                currentRunId = result.data.run_id;
+                currentSheets = result.data.sheets.map(sheet => sheet.sheet_name);  // Gunakan sheet_name
+                currentData = result.data;  // Simpan seluruh data untuk switch sheet
+
+                // Tampilkan preview sheet pertama secara default
+                displayPreview(currentData, 0);  // Index 0 untuk sheet pertama
+                previewSection.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal memuat preview: ' + error.message);
+            }
+        }
+
+        // Fungsi Commit
+        async function commitExcel(runId, sheets) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/alumni/imports/${runId}/commit`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sheets })  // sheets adalah array sheet_name
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Commit gagal: ${response.status} - ${errorText}`);
+                }
+
+                const result = await response.json();
+                console.log('Commit result:', result);
+
+                alert('File berhasil diupload dan data alumni berhasil diupdate!');
+                window.location.href = 'data_alumni.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengupload file Excel: ' + error.message);
+            }
+        }
+
+        // Fungsi untuk menampilkan preview (disesuaikan dengan semua baris/kolom, tombol switch sheet, tanpa Run ID/Valid/Error, dan hilangkan "Preview Sheet")
+        function displayPreview(data, sheetIndex) {
+            const sheet = data.sheets[sheetIndex];
+            let html = '<div class="preview-summary">';
+            html += `<p class="total-sheets"><strong>Total Sheets:</strong> ${data.sheets.length}</p>`;  // Tambah class untuk styling menarik
+
+            // Tombol navigasi sheet jika lebih dari 1 sheet
+            if (data.sheets.length > 1) {
+                html += '<div class="sheet-nav">';
+                data.sheets.forEach((s, index) => {
+                    const activeClass = index === sheetIndex ? 'active' : '';
+                    html += `<button class="sheet-btn ${activeClass}" onclick="displayPreview(currentData, ${index})">${s.sheet_name}</button>`;
+                });
+                html += '</div>';
+            }
+
+            // Tambahkan nama program studi di tengah atas tabel
+            if (sheet.prodi) {
+                html += `<h4 class="program-studi-name">${sheet.prodi}</h4>`;
+            }
+
+            if (sheet.rows && sheet.rows.length > 0) {
+                html += '<div class="table-scroll-wrapper"><div class="table-container"><table class="preview-table"><thead><tr>';
+                // Header dari semua kunci objek (exclude row_no jika ada)
+                const headers = Object.keys(sheet.rows[0]).filter(key => key !== 'row_no');
+                headers.forEach(col => {
+                    html += `<th>${col}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                // Tampilkan semua baris dari sheet
+                sheet.rows.forEach(row => {
+                    html += '<tr>';
+                    headers.forEach(col => {
+                        html += `<td>${row[col] || ''}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table></div></div>';
+            } else {
+                html += '<p>Tidak ada data di sheet ini.</p>';
+            }
+
+            html += '</div>';
+            previewContent.innerHTML = html;
+            // Scroll to top of the table wrapper
+            const tableWrapper = previewContent.querySelector('.table-scroll-wrapper');
+            if (tableWrapper) {
+                tableWrapper.scrollTop = 0;
+            }
+        }
+
+        // Tombol BATAL
+        document.getElementById('batalBtn').addEventListener('click', function () {
+            if (fileInput.files.length > 0) {
+                if (confirm('Apakah Anda yakin ingin membatalkan? File yang dipilih akan dihapus.')) {
+                    fileInput.value = '';
+                    fileName.textContent = '';
+                    uploadArea.style.borderColor = '#ddd';
+                }
+            } else {
+                window.location.href = 'menu_utama.html';
+            }
+        });
+
+        // Sidebar navigasi
+        document.getElementById('inputDataBtn').addEventListener('click', () => alert('Anda sudah berada di halaman Input Data Alumni'));
+        document.getElementById('menuUtamaBtn').addEventListener('click', () => window.location.href = 'menu_utama.html');
+        document.getElementById('dataAlumniBtn').addEventListener('click', () => window.location.href = 'data_alumni.html');
+        document.getElementById('infoAlumniBtn').addEventListener('click', () => window.location.href = 'Info_alumni.html');
+        document.getElementById('akunAdminBtn').addEventListener('click', () => window.location.href = 'data_admin.html');
+
+        // Tombol LOGOUT
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Cek role admin dan tampilkan tombol input manual jika Super Admin
+        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {role: 'admin'};
+        const isSuperAdmin = currentUser.role === 'Super Admin';
+        if (isSuperAdmin) {
+            document.getElementById('inputManualBtn').style.display = 'inline-block';
+        }
+
+        // Event listener untuk tombol input manual
+        document.getElementById('inputManualBtn').addEventListener('click', function () {
+            window.location.href = 'input_manual.html';
+        });
+    </script>
+</body>
+</html>

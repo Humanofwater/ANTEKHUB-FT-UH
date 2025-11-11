@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Utama - ANTEKHUB FT-UH</title>
+    <link rel="stylesheet" href="menu_utama.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+            <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+            <h1 class="header-title">ANTEKHUB FT-UH</h1>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+            <img src="img/Logout.png" alt="Logout Icon" class="logout-icon">
+            LOGOUT
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Tagline -->
+        <div class="tagline">
+            <h2>TEKNIK MENYATUKAN, ALUMNI MENGUATKAN</h2>
+        </div>
+
+        <!-- Menu Card -->
+        <div class="menu-card">
+            <div class="card-header">
+                <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="card-logo">
+                <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="card-logo">
+            </div>
+            <h3 class="menu-title">MENU UTAMA</h3>
+            
+            <div class="menu-buttons">
+                <div class="button-row">
+                    <button class="menu-btn" id="inputDataBtn">
+                        <img src="img/input data.png" alt="Input Icon" class="btn-icon">
+                        INPUT DATA ALUMNI
+                    </button>
+                    <button class="menu-btn" id="dataAlumniBtn">
+                        <img src="img/data alumni.png" alt="Data Icon" class="btn-icon">
+                        DATA ALUMNI
+                    </button>
+                </div>
+                <div class="button-row">
+                    <button class="menu-btn" id="infoAlumniBtn">
+                        <img src="img/info alumni.png" alt="Info Icon" class="btn-icon">
+                        INFO ALUMNI
+                    </button>
+                    <button class="menu-btn" id="akunAdminBtn">
+                        <img src="img/akun admin.png" alt="Admin Icon" class="btn-icon">
+                        AKUN ADMIN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Base URL for the server
+        const BASE_URL = 'http://localhost:3000/api';
+
+        // Helper function to make HTTP requests
+        async function apiRequest(method, endpoint, data = null, includeAuth = true) {
+          const url = `${BASE_URL}${endpoint}`;
+          const headers = {
+            'Content-Type': 'application/json',
+          };
+
+          if (includeAuth) {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+              headers.Authorization = `Bearer ${token}`;
+            }
+          }
+
+          const config = {
+            method,
+            headers,
+          };
+
+          if (data && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+            config.body = JSON.stringify(data);
+          }
+
+          try {
+            const response = await fetch(url, config);
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.message || `HTTP error! status: ${response.status}`);
+            }
+
+            return result;
+          } catch (error) {
+            console.error(`API request failed: ${method} ${endpoint}`, error);
+            throw error;
+          }
+        }
+
+        // Auth module
+        const auth = {
+          logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+          }
+        };
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('Apakah Anda yakin ingin logout?')) {
+                auth.logout();  // Hapus token dari localStorage
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Input Data Alumni button
+        document.getElementById('inputDataBtn').addEventListener('click', function() {
+            window.location.href = 'input_data_alumni.html';
+        });
+
+        // Data Alumni button
+        document.getElementById('dataAlumniBtn').addEventListener('click', function() {
+            window.location.href = 'data_alumni.html';
+        });
+
+        // Info Alumni button
+        document.getElementById('infoAlumniBtn').addEventListener('click', function() {
+            window.location.href = 'Info_alumni.html';
+        });
+
+        // Akun Admin button
+        document.getElementById('akunAdminBtn').addEventListener('click', function() {
+            window.location.href = 'data_admin.html';
+        });
+    </script>
+</body>
+</html>

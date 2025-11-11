@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Data Alumni - ANTEKHUB FT-UH</title>
+  <link rel="stylesheet" href="input_manual.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+      <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+      <h1 class="header-title">ANTEKHUB FT-UH</h1>
+    </div>
+    <button class="logout-btn" id="logoutBtn">
+      <img src="img/Logout.png" alt="Logout Icon" class="logout-icon"> LOGOUT
+    </button>
+  </header>
+
+  <!-- Navbar Horizontal -->
+  <nav class="navbar">
+    <button class="navbar-btn" id="menuUtamaBtn">
+      <img src="img/menu.png" alt="Menu Icon" class="navbar-icon">
+      MENU UTAMA
+    </button>
+    <button class="navbar-btn active" id="inputDataBtn">
+      <img src="img/input data.png" alt="Input Icon" class="navbar-icon">
+      Input Data Alumni
+    </button>
+    <button class="navbar-btn" id="dataAlumniBtn">
+      <img src="img/data alumni.png" alt="Data Icon" class="navbar-icon">
+      DATA ALUMNI
+    </button>
+    <button class="navbar-btn" id="infoAlumniBtn">
+      <img src="img/info alumni.png" alt="Info Icon" class="navbar-icon">
+      INFO ALUMNI
+    </button>
+    <button class="navbar-btn" id="akunAdminBtn">
+      <img src="img/akun admin.png" alt="Admin Icon" class="navbar-icon">
+      AKUN ADMIN
+    </button>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Main Content -->
+    <main class="content">
+      <div class="content-header">
+        <img src="img/input data.png" alt="Input Icon" class="content-icon">
+        <h2>INPUT MANUAL DATA ALUMNI</h2>
+      </div>
+
+      <div class="form-container">
+        <form id="alumniForm">
+          <!-- DATA PRIBADI -->
+          <div class="form-section">
+            <h3>Data Pribadi</h3>
+            <div class="form-group">
+              <label>Nama Lengkap:</label>
+              <input type="text" name="nama" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tempat Lahir:</label>
+                <input type="text" name="tempat_lahir" required>
+              </div>
+              <div class="form-group">
+                <label>Tanggal Lahir:</label>
+                <input type="date" name="tanggal_lahir" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Agama:</label>
+              <select name="agama" required>
+                <option value="">Pilih Agama</option>
+                <option>Islam</option>
+                <option>Kristen Protestan</option>
+                <option>Kristen Katholik</option>
+                <option>Hindu</option>
+                <option>Buddha</option>
+                <option>Konghucu</option>
+                <option>Lain-lain</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Bangsa (Negara):</label>
+                <select id="bangsa" name="bangsa_id" required>
+                  <option value="102">Indonesia</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Suku:</label>
+                <select id="suku" name="suku_id" required>
+                  <option value="">Memuat data...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Alamat:</label>
+              <textarea name="alamat" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>No. Telepon:</label>
+              <input type="text" name="no_telp" required>
+            </div>
+          </div>
+
+          <!-- DATA PENDIDIKAN -->
+          <div class="form-section">
+            <h3>Data Pendidikan</h3>
+            <div class="education-controls">
+              <button type="button" id="addEducationBtn" class="btn-add">+</button>
+              <span class="education-info">Tambah data pendidikan</span>
+            </div>
+            <div id="educationContainer">
+              <!-- Education entries will be added here -->
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button type="submit" class="btn btn-save">Simpan</button>
+          </div>
+        </form>
+  </main>
+
+  <script src="api.js"></script>
+  <script>
+    let educationIndex = 0;
+    let programStudiData = [];
+
+    function createEducationEntry(index) {
+      return `
+        <div class="education-entry" data-index="${index}">
+          <div class="education-header">
+            <h4>Data Pendidikan ${index + 1}</h4>
+            <button type="button" class="btn-remove" onclick="removeEducationEntry(${index})">−</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>NIM:</label>
+              <input type="text" name="nim_${index}" required>
+            </div>
+            <div class="form-group">
+              <label>Strata:</label>
+              <select name="strata_${index}" class="strata-select" required>
+                <option value="">Pilih Strata</option>
+                <option>Sarjana</option>
+                <option>Magister</option>
+                <option>Doktor</option>
+                <option>Diploma 3</option>
+                <option>Insinyur</option>
+                <option>Profesi Arsitektur</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Program Studi:</label>
+              <select name="program_studi_${index}" class="program-studi-select" required>
+                <option value="">Pilih Strata terlebih dahulu</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tahun Masuk:</label>
+              <input type="number" name="tahun_masuk_${index}" min="1980" max="2100" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Lama Studi (Tahun):</label>
+              <input type="number" name="lama_studi_tahun_${index}" min="0" max="10" required>
+            </div>
+            <div class="form-group">
+              <label>Lama Studi (Bulan):</label>
+              <input type="number" name="lama_studi_bulan_${index}" min="0" max="11" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>No Alumni:</label>
+              <input type="text" name="no_alumni_${index}" required>
+            </div>
+            <div class="form-group">
+              <label>Tanggal Lulus:</label>
+              <input type="date" name="tanggal_lulus_${index}" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nilai Ujian:</label>
+              <select name="nilai_ujian_${index}" required>
+                <option value="">Pilih Nilai</option>
+                <option>A</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B</option>
+                <option>B-</option>
+                <option>C+</option>
+                <option>C</option>
+                <option>C-</option>
+                <option>D</option>
+                <option>E</option>
+                <option>F</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>IPK:</label>
+              <input type="number" step="0.01" min="0" max="4" name="ipk_${index}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Predikat Kelulusan:</label>
+            <select name="predikat_kelulusan_${index}" required>
+              <option value="">Pilih Predikat</option>
+              <option>Summa Cum Laude</option>
+              <option>Cum Laude</option>
+              <option>Sangat Memuaskan</option>
+              <option>Memuaskan</option>
+              <option>Baik</option>
+              <option>Cukup</option>
+              <option>Kurang</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Judul Tugas Akhir:</label>
+            <input type="text" name="judul_tugas_akhir_${index}" id="judul_tugas_akhir_${index}">
+          </div>
+        </div>
+      `;
+    }
+
+    function addEducationEntry() {
+      const container = document.getElementById('educationContainer');
+      const entryHtml = createEducationEntry(educationIndex);
+      container.insertAdjacentHTML('beforeend', entryHtml);
+      educationIndex++;
+    }
+
+    function removeEducationEntry(index) {
+      const entry = document.querySelector(`.education-entry[data-index="${index}"]`);
+      if (entry) {
+        entry.remove();
+      }
+    }
+
+    async function loadData() {
+      const bangsaSelect = document.getElementById("bangsa");
+      const sukuSelect = document.getElementById("suku");
+
+      // Set Indonesia as default and add click handler to load other countries
+      bangsaSelect.innerHTML = '<option value="102">Indonesia</option>';
+      bangsaSelect.addEventListener('click', async function() {
+        if (bangsaSelect.dataset.loaded !== 'true') {
+          try {
+            const bangsaData = await window.API.bangsa.getAll();
+            bangsaSelect.innerHTML = '<option value="">Pilih Negara</option>';
+            bangsaData.data.forEach(b => {
+              bangsaSelect.innerHTML += `<option value="${b.id}">${b.nama}</option>`;
+            });
+            bangsaSelect.dataset.loaded = 'true';
+          } catch (err) {
+            console.error("Gagal load bangsa:", err);
+            bangsaSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+          }
+        }
+      });
+
+      try {
+        // Ambil suku menggunakan API client
+        const sukuData = await window.API.suku.getAll();
+
+        sukuSelect.innerHTML = '<option value="">Pilih Suku</option>';
+        sukuData.data.forEach(s => {
+          sukuSelect.innerHTML += `<option value="${s.id}">${s.nama}</option>`;
+        });
+      } catch (err) {
+        console.error("Gagal load suku:", err);
+        sukuSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+      }
+
+      // Load program studi data from JSON file
+      try {
+        const response = await fetch('ANTEKHUB-Server/Data/program_studi.json');
+        if (!response.ok) {
+          throw new Error('Failed to load program_studi.json');
+        }
+        const jsonData = await response.json();
+
+        // Transform JSON data to flat array
+        programStudiData = [];
+        jsonData.forEach(strataGroup => {
+          const strata = strataGroup.Strata;
+          if (strataGroup['Program Studi']) {
+            strataGroup['Program Studi'].forEach(prodi => {
+              programStudiData.push({
+                nama: prodi.Nama,
+                strata: strata
+              });
+            });
+          } else if (strataGroup.Nama) {
+            // For Insinyur and Profesi Arsitektur
+            programStudiData.push({
+              nama: strataGroup.Nama,
+              strata: strata
+            });
+          }
+        });
+      } catch (err) {
+        console.error("Gagal load program studi JSON:", err);
+      }
+
+      // Add first education entry by default
+      addEducationEntry();
+    }
+
+    // Form submission
+    document.getElementById("alumniForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const rawData = Object.fromEntries(formData.entries());
+
+      // Collect all education entries
+      const pendidikan = [];
+      const educationEntries = document.querySelectorAll('.education-entry');
+
+      educationEntries.forEach((entry, index) => {
+        const entryData = {
+          nim: rawData[`nim_${index}`],
+          program_studi: rawData[`program_studi_${index}`],
+          strata: rawData[`strata_${index}`],
+          tahun_masuk: parseInt(rawData[`tahun_masuk_${index}`]),
+          lama_studi_tahun: parseInt(rawData[`lama_studi_tahun_${index}`]),
+          lama_studi_bulan: parseInt(rawData[`lama_studi_bulan_${index}`]),
+          no_alumni: rawData[`no_alumni_${index}`],
+          tanggal_lulus: rawData[`tanggal_lulus_${index}`],
+          nilai_ujian: rawData[`nilai_ujian_${index}`],
+          ipk: parseFloat(rawData[`ipk_${index}`]),
+          predikat_kelulusan: rawData[`predikat_kelulusan_${index}`],
+          judul_tugas_akhir: rawData[`judul_tugas_akhir_${index}`] || null,
+          ipb: rawData[`ipb_${index}`] ? parseFloat(rawData[`ipb_${index}`]) : null
+        };
+        pendidikan.push(entryData);
+      });
+
+      // Struktur data sesuai dengan schema validator
+      const data = {
+        nama: rawData.nama,
+        tempat_lahir: rawData.tempat_lahir,
+        tanggal_lahir: rawData.tanggal_lahir,
+        agama: rawData.agama,
+        bangsa_id: rawData.bangsa_id ? parseInt(rawData.bangsa_id) : null,
+        suku_id: rawData.suku_id ? parseInt(rawData.suku_id) : null,
+        alamat: rawData.alamat,
+        no_telp: rawData.no_telp,
+        pendidikan: pendidikan
+      };
+
+      try {
+        const response = await fetch("http://localhost:3000/api/alumni", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Gagal menyimpan data alumni");
+        }
+
+        alert("Data alumni berhasil disimpan!");
+        // Reset form and education entries
+        this.reset();
+        document.getElementById('educationContainer').innerHTML = '';
+        educationIndex = 0;
+        addEducationEntry();
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Gagal menyimpan data: " + error.message);
+      }
+    });
+
+    // Navigation
+    document.getElementById('inputDataBtn').addEventListener('click', () => alert('Anda sudah berada di halaman Input Data Alumni'));
+    document.getElementById('menuUtamaBtn').addEventListener('click', () => window.location.href = 'menu_utama.html');
+    document.getElementById('dataAlumniBtn').addEventListener('click', () => window.location.href = 'data_alumni.html');
+    document.getElementById('infoAlumniBtn').addEventListener('click', () => window.location.href = 'Info_alumni.html');
+    document.getElementById('akunAdminBtn').addEventListener('click', () => window.location.href = 'data_admin.html');
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      if (confirm('Apakah Anda yakin ingin logout?')) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Event listener untuk add education button
+    document.getElementById('addEducationBtn').addEventListener('click', addEducationEntry);
+
+    // Event delegation for strata change in education entries
+    document.addEventListener('change', async function (e) {
+      if (e.target.classList.contains('strata-select')) {
+        const strata = e.target.value;
+        const entry = e.target.closest('.education-entry');
+        const programStudiSelect = entry.querySelector('.program-studi-select');
+        const judulTugasAkhirInput = entry.querySelector(`#judul_tugas_akhir_${entry.dataset.index}`);
+
+        if (!strata) {
+          programStudiSelect.innerHTML = '<option value="">Pilih Strata terlebih dahulu</option>';
+          if (judulTugasAkhirInput) {
+            judulTugasAkhirInput.required = false;
+          }
+          return;
+        }
+
+        try {
+          // Filter program studi dari data JSON yang sudah dimuat
+          const filteredProdi = programStudiData.filter(p => p.strata === strata);
+
+          programStudiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+          filteredProdi.forEach(p => {
+            programStudiSelect.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+          });
+
+          // Set required for judul_tugas_akhir based on strata
+          if (judulTugasAkhirInput) {
+            judulTugasAkhirInput.required = strata !== 'Profesi Arsitektur';
+          }
+        } catch (err) {
+          console.error("Gagal load program studi:", err);
+          programStudiSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+        }
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", loadData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Akun - ANTEKHUB FT-UH</title>
+    <link rel="stylesheet" href="Tambah_akun.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+        <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+        <h1 class="header-title">ANTEKHUB FT-UH</h1>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <img src="img/Logout.png" alt="Logout Icon" class="logout-icon">
+        LOGOUT
+      </button>
+    </header>
+
+    <main>
+      <div class="container">
+        <h2> <img src="img/input data.png" alt="logo" class="logo"/> Tambah Akun</h2>
+        <form action="#" method="post" class="form-register">
+          <input type="text" placeholder="Nama Lengkap" required />
+          <input type="text" placeholder="Username" required />
+          <input type="tel" placeholder="No. Telepon" required />
+
+          <div class="password-field">
+            <input type="password" placeholder="Masukkan Password" id="password" required />
+            <span class="toggle-password" onclick="togglePassword('password')"><img src="img/Vector.png" alt=""></span>
+          </div>
+
+          <div class="password-field">
+            <input type="password" placeholder="Konfirmasi Password" id="confirm-password" required />
+            <span class="toggle-password" onclick="togglePassword('confirm-password')"><img src="img/Vector.png" alt=""></span>
+          </div>
+
+          <select id="userType" required>
+            <option value="Admin">Admin</option>
+            <option value="Super Admin">Super Admin</option>
+          </select>
+
+          <div class="button-group">
+            <a href="data_admin.html" class="btn cancel">Kembali</a>
+            <button type="submit" class="btn add">Tambah</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script src="api.js"></script>
+    <script>
+      function togglePassword(id) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+      }
+
+      // Logout functionality
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        if (confirm('Apakah Anda yakin ingin logout?')) {
+          window.API.auth.logout();  // Hapus token dari localStorage
+          window.location.href = 'index.html';
+        }
+      });
+
+      // Form submit
+      const form = document.querySelector('.form-register');
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nama = document.querySelector('input[placeholder="Nama Lengkap"]').value.trim();
+        const username = document.querySelector('input[placeholder="Username"]').value.trim();
+        const noTlpn = document.querySelector('input[placeholder="No. Telepon"]').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const type = document.getElementById('userType').value;
+
+        if (password !== confirmPassword) {
+          alert('Password dan konfirmasi password tidak cocok!');
+          return;
+        }
+
+        try {
+          const adminData = {
+            nama,
+            username,
+            nomor_telepon: noTlpn,
+            password,
+            role: type
+          };
+
+          await window.API.userAdmin.createAdmin(adminData);
+          alert('Proses tambah akun berhasil dan akan tampil di data admin');
+          window.location.href = 'data_admin.html';
+        } catch (error) {
+          alert('Gagal menambah akun: ' + error.message);
+        }
+      });
+    </script>
+  </body>
+</html>
