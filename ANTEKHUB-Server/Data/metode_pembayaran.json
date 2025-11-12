@@ -1,0 +1,122 @@
+[
+  {
+    "method_code": "e_wallet",
+    "name": "E-Wallet",
+    "channels": [
+      {
+        "channel_code": "gopay",
+        "name": "GoPay"
+      },
+      {
+        "channel_code": "shopeepay",
+        "name": "ShopeePay"
+      },
+      {
+        "channel_code": "ovo",
+        "name": "OVO"
+      },
+      {
+        "channel_code": "dana",
+        "name": "DANA"
+      },
+      {
+        "channel_code": "linkaja",
+        "name": "LinkAja"
+      }
+    ]
+  },
+  {
+    "method_code": "virtual_account",
+    "name": "Virtual Account",
+    "channels": [
+      {
+        "channel_code": "bca_va",
+        "name": "BCA Virtual Account"
+      },
+      {
+        "channel_code": "mandiri_va",
+        "name": "Mandiri Virtual Account"
+      },
+      {
+        "channel_code": "bni_va",
+        "name": "BNI Virtual Account"
+      },
+      {
+        "channel_code": "bri_va",
+        "name": "BRI Virtual Account"
+      },
+      {
+        "channel_code": "permata_va",
+        "name": "Permata Virtual Account"
+      },
+      {
+        "channel_code": "bsi_va",
+        "name": "BSI Virtual Account"
+      }
+    ]
+  },
+  {
+    "method_code": "credit_card",
+    "name": "Kartu Kredit / Debit",
+    "channels": [
+      {
+        "channel_code": "visa",
+        "name": "Visa"
+      },
+      {
+        "channel_code": "mastercard",
+        "name": "Mastercard"
+      },
+      {
+        "channel_code": "jcb",
+        "name": "JCB"
+      },
+      {
+        "channel_code": "amex",
+        "name": "American Express"
+      }
+    ]
+  },
+  {
+    "method_code": "retail_outlet",
+    "name": "Gerai Ritel",
+    "channels": [
+      {
+        "channel_code": "indomaret",
+        "name": "Indomaret"
+      },
+      {
+        "channel_code": "alfamart",
+        "name": "Alfamart / Alfamidi"
+      }
+    ]
+  },
+  {
+    "method_code": "paylater",
+    "name": "PayLater",
+    "channels": [
+      {
+        "channel_code": "kredivo",
+        "name": "Kredivo"
+      },
+      {
+        "channel_code": "akulaku",
+        "name": "Akulaku"
+      },
+      {
+        "channel_code": "gopaylater",
+        "name": "GoPayLater"
+      }
+    ]
+  },
+  {
+    "method_code": "qr_payment",
+    "name": "Pembayaran QR",
+    "channels": [
+      {
+        "channel_code": "qris",
+        "name": "QRIS"
+      }
+    ]
+  }
+]

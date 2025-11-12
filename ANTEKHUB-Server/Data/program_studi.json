@@ -1,0 +1,174 @@
+[
+    {
+        "Strata" : "Sarjana", 
+        "Program Studi": [
+            {
+                "kode": ["D111", "D011"],
+                "Nama": "Teknik Sipil",
+                "alias": ["S1 Teknik Sipil", "Sarjana Teknik Sipil", "Departemen Teknik Sipil", "Sipil", "S1 Sipil", "Sarjana Sipil", "Departemen Sipil"]
+            },
+            {
+                "Kode": ["D121", "D421"],
+                "Nama": "Teknik Informatika",
+                "alias": ["S1 Teknik Informatika", "Sarjana Teknik Informatika", "Departemen Teknik Informatika", "Informatika", "S1 Informatika", "Sarjana Informatika", "Departemen Informatika"]
+            },
+            {
+                "Kode": ["D031", "D311"],
+                "Nama": "Teknik Perkapalan",
+                "alias": ["S1 Teknik Perkapalan", "Sarjana Teknik Perkapalan", "Departemen Teknik Perkapalan", "Perkapalan", "S1 Perkapalan", "Sarjana Perkapalan", "Departemen Perkapalan"]
+            },
+            {
+                "Kode": ["D041", "D411"],
+                "Nama": "Teknik Elektro",
+                "alias": ["S1 Teknik Elektro", "Sarjana Teknik Elektro", "Departemen Teknik Elektro", "Elektro", "S1 Elektro", "Sarjana Elektro", "Departemen Elektro"]
+            },
+            {
+                "Kode": ["D051", "D511"],
+                "Nama": "Teknik Arsitektur",
+                "alias": ["S1 Teknik Arsitektur", "Sarjana Teknik Arsitektur", "Departemen Teknik Arsitektur", "Arsitektur", "S1 Arsitektur", "Sarjana Arsitektur", "Departemen Arsitektur"]
+            },
+            {
+                "Kode": ["D061", "D611", "D621"],
+                "Nama": "Teknik Geologi",
+                "alias": ["S1 Teknik Geologi", "Sarjana Teknik Geologi", "Departemen Teknik Geologi", "Geologi", "S1 Geologi", "Sarjana Geologi", "Departemen Geologi"]
+            },
+            {
+                "Kode": ["D071", "D221"],
+                "Nama": "Teknik Industri",
+                "alias": ["S1 Teknik Industri", "Sarjana Teknik Industri", "Departemen Teknik Industri", "Industri", "S1 Industri", "Sarjana Industri", "Departemen Industri"]
+            },
+            {
+                "Kode": ["D091", "D331"],
+                "Nama": "Teknik Sistem Perkapalan",
+                "alias": ["S1 Teknik Sistem Perkapalan", "Sarjana Teknik Sistem Perkapalan", "Departemen Teknik Sistem Perkapalan", "Sistem Perkapalan", "S1 Sistem Perkapalan", "Sarjana Sistem Perkapalan", "Departemen Sistem Perkapalan"]
+            },
+            {
+                "Kode": ["D101", "D521"],
+                "Nama": "Teknik Peng. Wilayah Kota",
+                "alias": ["S1 Teknik Peng. Wilayah Kota", "Sarjana Teknik Peng. Wilayah Kota", "Departemen Teknik Peng. Wilayah Kota", "Teknik PWK", "S1 PWK", "Sarjana PWK", "Departemen PWK", "Teknik Perencanaan Wilayah dan Kota", "Departemen Perencanaan Wilayah dan Kota", "Perencanaan Wilayah dan Kota", "S1 Perencanaan Wilayah dan Kota", "Sarjana Perencanaan Wilayah dan Kota", "Teknik Perencanaan Wilayah Kota", "Departemen Teknik Perencanaan Wilayah Kota", "S1 Teknik Perencanaan Wilayah Kota", "Sarjana Teknik Perencanaan Wilayah Kota", "PWK", "Perencanaan Wilayah Kota", "Departemen Perencanaan Wilayah Kota", "S1 Perencanaan Wilayah Kota", "Sarjana Perencanaan Wilayah Kota"]
+            },
+            {
+                "Kode": ["D111", "D621", "D611"],
+                "Nama": "Teknik Pertambangan",
+                "alias": ["S1 Teknik Pertambangan", "Sarjana Teknik Pertambangan", "Departemen Teknik Pertambangan", "Pertambangan", "S1 Pertambangan", "Sarjana Pertambangan", "Departemen Pertambangan"]
+            },
+            {
+                "Kode": ["D021", "D211"],
+                "Nama": "Teknik Mesin",
+                "alias": ["S1 Teknik Mesin", "Sarjana Teknik Mesin", "Departemen Teknik Mesin", "Mesin", "S1 Mesin", "Sarjana Mesin", "Departemen Mesin"]
+            },
+            {
+                "Kode": ["D081", "D321"],
+                "Nama": "Teknik Kelautan",
+                "alias": ["S1 Teknik Kelautan", "Sarjana Teknik Kelautan", "Departemen Teknik Kelautan", "Kelautan", "S1 Kelautan", "Departemen Kelautan", "Sarjana Kelautan"]
+            },
+            {
+                "Kode": ["D131", "D121"],
+                "Nama": "Teknik Lingkungan",
+                "alias": ["S1 Teknik Lingkungan", "Sarjana Teknik Lingkungan", "Departemen Teknik Lingkungan", "Lingkungan", "S1 Lingkungan", "Sarjana Lingkungan", "Departemen Lingkungan"]
+            }
+        ]
+    }, 
+    {
+        "Strata": "Magister",
+        "Program Studi": [
+            {
+                "Kode": ["D012"],
+                "Nama": "Teknik Sipil",
+                "alias": ["S2 Teknik Sipil", "Magister Teknik Sipil", "Departemen Teknik Sipil", "Sipil", "S2 Sipil", "Magister Sipil", "Departemen Sipil"]
+            },
+            {
+                "Kode": ["D032"],
+                "Nama": "Teknik Elektro",
+                "alias": ["S2 Teknik Elektro", "Magister Teknik Elektro", "Departemen Teknik Elektro", "Elektro", "S2 Elektro", "Magister Elektro", "Departemen Elektro"]
+            },
+            {
+                "Kode": ["D042"],
+                "Nama": "Teknik Arsitektur",
+                "alias": ["S2 Teknik Arsitektur", "Magister Teknik Arsitektur", "Departemen Teknik Arsitektur", "Arsitektur", "S2 Arsitektur", "Magister Arsitektur", "Departemen Arsitektur"]
+            },
+            {
+                "Kode": ["D052"],
+                "Nama": "Teknik Perkapalan",
+                "alias": ["S2 Teknik Sistem Perkapalan", "Magister Teknik Sistem Perkapalan", "Departemen Teknik Sistem Perkapalan", "Sistem Perkapalan", "S2 Sistem Perkapalan", "Magister Sistem Perkapalan", "Departemen Sistem Perkapalan"]
+            },
+            {
+                "Kode": ["D062"],
+                "Nama": "Teknik Geologi",
+                "alias": ["S2 Teknik Geologi", "Magister Teknik Geologi", "Departemen Teknik Geologi", "Geologi", "S2 Geologi", "Magister Geologi", "Departemen Geologi"]
+            },
+            {
+                "Kode": ["D082"],
+                "Nama": "Teknik Informatika",
+                "alias": ["S2 Teknik Informatika", "Magister Teknik Informatika", "Departemen Teknik Informatika", "Informatika", "S2 Informatika", "Magister Informatika", "Departemen Informatika"]
+            },
+            {
+                "Kode": ["D092"],
+                "Nama": "Teknik Lingkungan",
+                "alias": ["S2 Teknik Lingkungan", "Magister Teknik Lingkungan", "Departemen Teknik Lingkungan", "Lingkungan", "S2 Lingkungan", "Magister Lingkungan", "Departemen Lingkungan"]
+            },
+            {
+                "Kode": ["D112"],
+                "Nama": "Teknik Pertambangan",
+                "alias": ["S2 Teknik Pertambangan", "Magister Teknik Pertambangan", "Departemen Teknik Pertambangan", "Pertambangan", "S2 Pertambangan", "Magister Pertambangan", "Departemen Pertambangan"]
+            },
+            {
+                "Kode": ["D022"],
+                "Nama": "Teknik Mesin",
+                "alias": ["S2 Teknik Mesin", "Magister Teknik Mesin", "Departemen Teknik Mesin", "Mesin", "S2 Mesin", "Magister Mesin", "Departemen Mesin"]
+            },
+            {
+                "Kode": ["D102"],
+                "Nama": "Perencanaan Wilayah dan Kota",
+                "alias": ["S2 Teknik Peng. Wilayah Kota", "Magister Teknik Peng. Wilayah Kota", "Departemen Teknik Peng. Wilayah Kota", "Teknik PWK", "S2 PWK", "Magister PWK", "Departemen PWK", "Teknik Perencanaan Wilayah dan Kota", "Departemen Perencanaan Wilayah dan Kota", "Perencanaan Wilayah dan Kota", "S2 Perencanaan Wilayah dan Kota", "Magister Perencanaan Wilayah dan Kota", "Teknik Perencanaan Wilayah Kota", "Departemen Teknik Perencanaan Wilayah Kota", "S2 Teknik Perencanaan Wilayah Kota", "Magister Teknik Perencanaan Wilayah Kota", "PWK", "Perencanaan Wilayah Kota", "Departemen Perencanaan Wilayah Kota", "S2 Perencanaan Wilayah Kota", "Magister Perencanaan Wilayah Kota"]
+            },
+            {
+                "Kode": ["D072"],
+                "Nama": "Teknik Industri",
+                "alias": ["S2 Teknik Industri", "Magister Teknik Industri", "Departemen Teknik Industri", "Industri", "S2 Industri", "Magister Industri", "Departemen Industri"]
+            }
+        ]
+    },
+    {
+        "Strata": "Doktor",
+        "Program Studi": [
+            {
+                "Kode": ["D013"],
+                "Nama": "Teknik Sipil",
+                "alias": ["S3 Teknik Sipil", "Doktor Teknik Sipil", "Departemen Teknik Sipil", "Sipil", "S3 Sipil", "Doktor Sipil", "Departemen Sipil"]
+            },
+            {
+                "Kode": ["D023"],
+                "Nama": "Ilmu Arsitektur",
+                "alias": ["S3 Teknik Arsitektur", "Doktor Teknik Arsitektur", "Departemen Teknik Arsitektur", "Arsitektur", "S3 Arsitektur", "Doktor Arsitektur", "Departemen Arsitektur", "Ilmu Arsitektur", "Departemen Ilmu Arsitektur", "S3 Ilmu Arsitektur", "Doktor Ilmu Arsitektur"]
+            },
+            {
+                "Kode": ["D033"],
+                "Nama": "Tekonolgi Kebumian dan Lingkungan",
+                "alias": ["S3 Teknologi Kebumian dan Lingkungan", "Doktor Teknologi Kebumian dan Lingkungan", "Departemen Teknologi Kebumian dan Lingkungan", "Teknologi Kebumian dan Lingkungan", "S3 Teknologi Kebumian", "Doktor Teknologi Kebumian", "Departemen Teknologi Kebumian", "Teknologi Lingkungan", "S3 Teknologi Lingkungan", "Doktor Teknologi Lingkungan", "Departemen Teknologi Lingkungan"]
+            },
+            {
+                "Kode": ["D043"],
+                "Nama": "Teknik Mesin",
+                "alias": ["S2 Teknik Mesin", "Doktor Teknik Mesin", "Departemen Teknik Mesin", "Mesin", "S2 Mesin", "Doktor Mesin", "Departemen Mesin"]
+            },
+            {
+                "Kode": ["D053"],
+                "Nama": "Teknik Elektro",
+                "alias": ["S3 Teknik Elektro", "Doktor Teknik Elektro", "Departemen Teknik Elektro", "Elektro", "S3 Elektro", "Doktor Elektro", "Departemen Elektro"]
+            }
+        ]
+    },
+    {
+        "Strata": "Insinyur",
+        "Kode": ["D014"],
+        "Nama": "Profesi Insinyur",
+        "alias": ["Profesi Insinyur", "Program Profesi Insinyur", "PPI"]
+    },
+    {
+        "Strata": "Profesi Arsitektur",
+        "Kode": ["D024"],
+        "Nama": "Pendidikan Profesi Arsitek",
+        "alias": ["Pendidikan Profesi Arsitek", "Program Profesi Arsitek", "PPA", "Profesi Arsitek", "Profesi Arsitektur", "Pendidikan Profesi Arsitektur", "Program Profesi Arsitektur"]
+    }
+]

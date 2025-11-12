@@ -163,18 +163,18 @@
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Program Studi:</label>
-              <select name="program_studi_${index}" class="program-studi-select" required>
-                <option value="">Pilih Strata terlebih dahulu</option>
-              </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Program Studi:</label>
+                <select name="program_studi_${index}" class="program-studi-select" required>
+                  <option value="">Pilih Program Studi</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Tahun Masuk:</label>
+                <input type="number" name="tahun_masuk_${index}" min="1980" max="2100" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label>Tahun Masuk:</label>
-              <input type="number" name="tahun_masuk_${index}" min="1980" max="2100" required>
-            </div>
-          </div>
 
           <div class="form-row">
             <div class="form-group">
@@ -326,6 +326,16 @@
 
       // Add first education entry by default
       addEducationEntry();
+
+      // Populate program studi select with all options initially
+      const firstEntry = document.querySelector('.education-entry');
+      if (firstEntry) {
+        const programStudiSelect = firstEntry.querySelector('.program-studi-select');
+        programStudiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+        programStudiData.forEach(p => {
+          programStudiSelect.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+        });
+      }
     }
 
     // Form submission
@@ -426,7 +436,11 @@
         const judulTugasAkhirInput = entry.querySelector(`#judul_tugas_akhir_${entry.dataset.index}`);
 
         if (!strata) {
-          programStudiSelect.innerHTML = '<option value="">Pilih Strata terlebih dahulu</option>';
+          // Show all program studi when no strata selected
+          programStudiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+          programStudiData.forEach(p => {
+            programStudiSelect.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+          });
           if (judulTugasAkhirInput) {
             judulTugasAkhirInput.required = false;
           }

@@ -1,0 +1,33 @@
+{
+  "jenis_institusi": [
+    "Pemerintah Pusat",
+    "Pemerintah Provinsi",
+    "Pemerintah Daerah",
+    "Pemerintah Kota",
+    "BUMN",
+    "BUMD",
+    "BUMC",
+    "Swasta",
+    "Startup",
+    "Koperasi",
+    "UKM",
+    "Freelance",
+    "Wirausaha",
+    "Yayasan",
+    "NGO/LSM",
+    "Komunitas Sosial",
+    "Organisasi Internasional",
+    "Pendidikan",
+    "Kesehatan",
+    "Religi/Keagamaan",
+    "Penelitian/Riset",
+    "Teknologi Informasi",
+    "Luar Negeri",
+    "Militer/Polri",
+    "Politik/Partai",
+    "Media/Publikasi",
+    "Lainnya"
+  ],
+  "total": 27,
+  "note": "Daftar kategori jenis institusi yang mencakup sektor pemerintahan, swasta, pendidikan, kesehatan, sosial, dan wirausaha di Indonesia."
+}
