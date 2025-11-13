@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Alumni - ANTEKHUB FT-UH</title>
+  <link rel="stylesheet" href="data_alumni.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+      <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+      <h1 class="header-title">ANTEKHUB FT-UH</h1>
+    </div>
+    <button class="logout-btn" id="logoutBtn">
+      <img src="img/Logout.png" alt="Logout Icon" class="logout-icon">
+      LOGOUT
+    </button>
+  </header>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Navbar Horizontal -->
+    <nav class="navbar">
+      <button class="navbar-btn" id="menuUtamaBtn">
+        <img src="img/menu.png" alt="Menu Icon" class="navbar-icon">
+        MENU UTAMA
+      </button>
+      <button class="navbar-btn" id="inputDataBtn">
+        <img src="img/input data.png" alt="Input Icon" class="navbar-icon">
+        Input Data Alumni
+      </button>
+      <button class="navbar-btn active" id="dataAlumniBtn">
+        <img src="img/data alumni.png" alt="Data Icon" class="navbar-icon">
+        DATA ALUMNI
+      </button>
+      <button class="navbar-btn" id="infoAlumniBtn">
+        <img src="img/info alumni.png" alt="Info Icon" class="navbar-icon">
+        INFO ALUMNI
+      </button>
+      <button class="navbar-btn" id="akunAdminBtn">
+        <img src="img/akun admin.png" alt="Admin Icon" class="navbar-icon">
+        AKUN ADMIN
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="content-header">
+        <img src="img/data alumni.png" alt="Data Icon" class="content-icon">
+        <h2>DATA ALUMNI</h2>
+      </div>
+
+      <div class="preview-container">
+        <div class="table-section">
+          <div class="search-filter-row">
+            <button id="toggleFilterBtn" class="btn-toggle-filter">
+              <img src="img/data alumni.png" alt="Filter Icon" class="filter-icon">
+              Filter
+            </button>
+            <div class="search-container">
+              <input type="text" id="searchInput" placeholder="Cari alumni..." class="search-input">
+              <img src="img/Search.svg" alt="Search Icon" class="search-icon">
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <select id="filterProdi">
+              <option value="">Semua Strata</option>
+            </select>
+            <select id="filterAgama">
+              <option value="">Semua Agama</option>
+            </select>
+            <select id="filterTempatLahir">
+              <option value="">Semua Tempat Lahir</option>
+            </select>
+            <select id="filterLokasi">
+              <option value="">Semua Alamat</option>
+            </select>
+            <button id="sortTerbaru" class="btn-filter">Terbaru Di Update</button>
+            <button id="cancelFilter" class="btn-filter">Batal</button>
+          </div>
+
+          <div class="table-wrapper">
+            <div class="table-container">
+              <table id="tabelAlumni" border="1" cellpadding="8" cellspacing="0">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+            <div class="pagination-controls">
+              <label for="rowsPerPage">Rows per page:</label>
+              <select id="rowsPerPage" class="rows-per-page-select">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100" selected>100</option>
+              </select>
+              <button id="prevPageBtn" class="btn-pagination">Previous</button>
+              <span id="pageInfo" class="page-info">Page 1 of 1</span>
+              <button id="nextPageBtn" class="btn-pagination">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-cancel" id="hapusDataBtn">Hapus Semua Data</button>
+        <button class="btn btn-save" id="kembaliBtn">Kembali ke Input</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Base URL for the server
+    const BASE_URL = 'http://localhost:3000/api';
+
+    // Helper function to make HTTP requests
+    async function apiRequest(method, endpoint, data = null, includeAuth = true) {
+      const url = `${BASE_URL}${endpoint}`;
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      if (includeAuth) {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+      }
+
+      const config = {
+        method,
+        headers,
+      };
+
+      if (data && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+        config.body = JSON.stringify(data);
+      }
+
+      try {
+        const response = await fetch(url, config);
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        return result;
+      } catch (error) {
+        console.error(`API request failed: ${method} ${endpoint}`, error);
+        throw error;
+      }
+    }
+
+    // Alumni module
+    const alumni = {
+      async getAll(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        const endpoint = `/alumni${queryString ? '?' + queryString : ''}`;
+        return apiRequest('GET', endpoint);
+      },
+
+      async updateAlumni(uuid, data) {
+        return apiRequest('PATCH', `/alumni/${uuid}`, data);
+      },
+
+      async deleteAlumni(uuid) {
+        return apiRequest('DELETE', `/alumni/${uuid}`);
+      },
+
+      async deleteAllAlumni() {
+        return apiRequest('DELETE', '/alumni/__all');
+      }
+    };
+
+    // Auth module
+    const auth = {
+      logout() {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+      }
+    };
+
+    // Global variables
+    let data = [];
+    const tableHead = document.getElementById('tableHead');
+    const tableBody = document.getElementById('tableBody');
+    const filterProdi = document.getElementById('filterProdi');
+    const filterAgama = document.getElementById('filterAgama');
+    const filterTempatLahir = document.getElementById('filterTempatLahir');
+    const filterLokasi = document.getElementById('filterLokasi');
+    const sortTerbaru = document.getElementById('sortTerbaru');
+    let filteredData = [...data];
+    let isSortedByDate = false;
+    let searchTerm = '';
+    // Pagination variables
+    let currentPage = 1;
+    let itemsPerPage = 100;
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    const pageInfo = document.getElementById('pageInfo');
+    const rowsPerPageSelect = document.getElementById('rowsPerPage');
+
+    // Load alumni data from API - load all pages to get complete dataset
+    async function loadAlumniData() {
+      try {
+        let allData = [];
+        let page = 1;
+        const limit = 100; // Use max limit per page to minimize API calls
+        let hasMoreData = true;
+
+        while (hasMoreData) {
+          const result = await alumni.getAll({ page, limit });
+          const apiData = result.data || [];
+          const meta = result.meta || {};
+
+          if (apiData.length > 0) {
+            // Transform API data to flat structure with only alumni fields
+            const transformedData = apiData.map(alumni => ({
+              uuid: alumni.uuid,
+              Nama: alumni.nama || '',
+              'Tempat Lahir': alumni.tempat_lahir || '',
+              'Tanggal Lahir': alumni.tanggal_lahir ? new Date(alumni.tanggal_lahir).toISOString().split('T')[0] : '',
+              Agama: alumni.agama || '',
+              Alamat: alumni.alamat || '',
+              'No Telp': alumni.no_telp || '',
+              update: alumni.updated_at ? new Date(alumni.updated_at).toISOString().split('T')[0] : ''
+            }));
+            allData = allData.concat(transformedData);
+            page++;
+          } else {
+            hasMoreData = false;
+          }
+
+          // Safety check to prevent infinite loop
+          if (page > 1000) {
+            console.warn('Reached maximum page limit (1000), stopping data load');
+            hasMoreData = false;
+          }
+        }
+
+        data = allData;
+        filteredData = [...data];
+        populateFilters();
+        applyFilters();
+        renderTable();
+      } catch (error) {
+        console.error('Failed to load alumni data:', error);
+        alert('Gagal memuat data alumni: ' + error.message);
+      }
+    }
+
+  // Header tetap untuk tabel alumni - field yang diperlukan saja
+  const fixedHeaders = ['Nama', 'Tempat Lahir', 'Tanggal Lahir', 'Agama', 'Alamat', 'No Telp', 'update'];
+
+    function renderTable(displayData = filteredData) {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageData = displayData.slice(startIndex, endIndex);
+
+      if (pageData.length > 0) {
+        let headerHTML = '<tr>';
+        fixedHeaders.forEach(h => headerHTML += '<th>' + h + '</th>');
+        headerHTML += '<th>Aksi</th></tr>';
+        tableHead.innerHTML = headerHTML;
+
+        let bodyHTML = '';
+        pageData.forEach((row, displayIndex) => {
+          const originalIndex = data.indexOf(row);
+          bodyHTML += '<tr>';
+          fixedHeaders.forEach(h => {
+            // display placeholder when value is missing
+            const rawVal = row[h];
+            const displayVal = (rawVal !== undefined && rawVal !== null && rawVal !== '') ? rawVal : '—';
+            bodyHTML += '<td contenteditable="false"' + (displayVal === '—' ? ' class="empty"' : '') + '>' + displayVal + '</td>';
+          });
+          bodyHTML += '<td class="aksi"><button class="btn-mini btn-edit" onclick="editRow(' + originalIndex + ', this)">Edit</button></td></tr>';
+        });
+        tableBody.innerHTML = bodyHTML;
+      } else {
+        tableHead.innerHTML = '';
+        const colspan = fixedHeaders.length + 1; // +1 untuk kolom Aksi
+        tableBody.innerHTML = '<tr><td colspan="' + colspan + '" style="text-align:center;">Tidak ada data alumni yang tersimpan.</td></tr>';
+      }
+      updatePageInfo(displayData.length);
+    }
+
+    // Function to update page info
+    function updatePageInfo(totalItems) {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    // Function to go to a specific page
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        renderTable();
+      }
+    }
+
+    // Fungsi untuk mengisi filter
+    function populateFilters() {
+      if (data.length === 0) return;
+
+      const agamaSet = new Set();
+      const tempatLahirSet = new Set();
+      const alamatSet = new Set();
+
+      data.forEach(row => {
+        if (row.Agama) agamaSet.add(row.Agama);
+        if (row['Tempat Lahir']) tempatLahirSet.add(row['Tempat Lahir']);
+        if (row.Alamat) alamatSet.add(row.Alamat);
+      });
+
+      // Isi filter Agama
+      filterAgama.innerHTML = '<option value="">Semua Agama</option>';
+      Array.from(agamaSet).sort().forEach(agama => {
+        filterAgama.innerHTML += '<option value="' + agama + '">' + agama + '</option>';
+      });
+
+      // Isi filter Tempat Lahir
+      filterTempatLahir.innerHTML = '<option value="">Semua Tempat Lahir</option>';
+      Array.from(tempatLahirSet).sort().forEach(tempat => {
+        filterTempatLahir.innerHTML += '<option value="' + tempat + '">' + tempat + '</option>';
+      });
+
+      // Isi filter Alamat
+      filterLokasi.innerHTML = '<option value="">Semua Alamat</option>';
+      Array.from(alamatSet).sort().forEach(alamat => {
+        filterLokasi.innerHTML += '<option value="' + alamat + '">' + alamat + '</option>';
+      });
+
+      // Hide strata filter since it's not used
+      filterProdi.style.display = 'none';
+    }
+
+    // Fungsi untuk menerapkan filter
+    function applyFilters() {
+      const selectedAgama = filterAgama.value;
+      const selectedTempatLahir = filterTempatLahir.value;
+      const selectedAlamat = filterLokasi.value;
+
+      filteredData = data.filter(row => {
+        const matchAgama = !selectedAgama || row.Agama === selectedAgama;
+        const matchTempatLahir = !selectedTempatLahir || row['Tempat Lahir'] === selectedTempatLahir;
+        const matchAlamat = !selectedAlamat || row.Alamat === selectedAlamat;
+        const matchSearch = !searchTerm || Object.values(row).some(val => val && val.toString().toLowerCase().includes(searchTerm.toLowerCase()));
+        return matchAgama && matchTempatLahir && matchAlamat && matchSearch;
+      });
+
+      // Sorting by date is removed since the field is no longer in the table
+    }
+
+    // Event listeners untuk filter
+    filterAgama.addEventListener('change', () => {
+      currentPage = 1;
+      applyFilters();
+      renderTable();
+    });
+
+    filterTempatLahir.addEventListener('change', () => {
+      currentPage = 1;
+      applyFilters();
+      renderTable();
+    });
+
+    filterLokasi.addEventListener('change', () => {
+      currentPage = 1;
+      applyFilters();
+      renderTable();
+    });
+
+    // Sorting button is disabled since the date field is removed
+    sortTerbaru.style.display = 'none';
+
+    // Event listener untuk toggle filter
+    const toggleFilterBtn = document.getElementById('toggleFilterBtn');
+    const filterSection = document.querySelector('.filter-section');
+    toggleFilterBtn.addEventListener('click', () => {
+      if (filterSection.style.display === 'none') {
+        filterSection.style.display = 'flex';
+      } else {
+        filterSection.style.display = 'none';
+      }
+    });
+
+    // Event listener untuk cancel filter
+    const cancelFilter = document.getElementById('cancelFilter');
+    cancelFilter.addEventListener('click', () => {
+      filterAgama.value = '';
+      filterTempatLahir.value = '';
+      filterLokasi.value = '';
+      isSortedByDate = false;
+      sortTerbaru.textContent = 'Terbaru Di Update';
+      searchTerm = '';
+      document.getElementById('searchInput').value = '';
+      currentPage = 1;
+      applyFilters();
+      renderTable();
+    });
+
+    // Event listener untuk search
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      currentPage = 1;
+      applyFilters();
+      renderTable();
+    });
+
+    // Event listeners untuk pagination
+    prevPageBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+      }
+    });
+
+    // Cek tipe user untuk tombol hapus
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const userType = currentUser ? currentUser.type : null;
+    if (userType !== 'super admin') {
+      document.getElementById('hapusDataBtn').style.display = 'none';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      if (confirm('Apakah Anda yakin ingin logout?')) {
+        auth.logout();  // Hapus token dari localStorage
+        window.location.href = 'index.html';
+      }
+    });
+
+    document.getElementById('inputDataBtn').addEventListener('click', () => window.location.href = 'input_data_alumni.html');
+    document.getElementById('menuUtamaBtn').addEventListener('click', () => window.location.href = 'menu_utama.html');
+    document.getElementById('dataAlumniBtn').addEventListener('click', () => alert('Anda sudah berada di halaman Data Alumni'));
+    document.getElementById('infoAlumniBtn').addEventListener('click', () => window.location.href = 'Info_alumni.html');
+    document.getElementById('akunAdminBtn').addEventListener('click', () => window.location.href = 'data_admin.html');
+
+    document.getElementById('hapusDataBtn').addEventListener('click', async () => {
+      if (confirm('Apakah Anda yakin ingin menghapus semua data alumni?')) {
+        try {
+          await alumni.deleteAllAlumni();
+          data = [];
+          filteredData = [];
+          renderTable();
+          alert('Semua data alumni berhasil dihapus!');
+        } catch (error) {
+          alert('Gagal menghapus data alumni: ' + error.message);
+        }
+      }
+    });
+
+    function editRow(index, button) {
+      const row = button.closest('tr');
+      const cells = row.querySelectorAll('td:not(.aksi)');
+
+      cells.forEach((td) => {
+        td.setAttribute('contenteditable', 'true');
+      });
+      const aksiCell = button.parentElement;
+      aksiCell.innerHTML = '<button class="btn-mini btn-save-mini" onclick="saveRow(' + index + ', this)">Simpan</button>' +
+        '<button class="btn-mini btn-delete" onclick="deleteRow(' + index + ')">Hapus</button>';
+    }
+
+    async function saveRow(index, button) {
+      const row = button.closest('tr');
+      const cells = row.querySelectorAll('td:not(.aksi)');
+
+      const updatedData = {};
+      fixedHeaders.forEach((h, i) => {
+        updatedData[h] = cells[i].textContent.trim();
+      });
+      // Update tanggal terakhir di update
+      updatedData["Tanggal Terakhir Di Update"] = new Date().toISOString().split('T')[0];
+
+      try {
+        // Transform frontend data back to backend format
+        const backendData = {
+          nama: updatedData.Nama,
+          riwayat_pendidikan: [{
+            nim: updatedData.NIM,
+            program_studi: updatedData['Program Studi'],
+            strata: updatedData.Strata,
+            tahun_masuk: parseInt(updatedData['Tahun Masuk']) || null,
+            tanggal_lulus: updatedData['Tanggal Lulus'] ? new Date(updatedData['Tanggal Lulus']).toISOString().split('T')[0] : null,
+            ipk: parseFloat(updatedData.IPK) || null,
+            predikat_kelulusan: updatedData['Predikat Kelulusan']
+          }]
+        };
+        await alumni.updateAlumni(data[index].uuid, backendData);
+        // Update local data
+        Object.assign(data[index], updatedData);
+        // Re-filter data
+        applyFilters();
+        renderTable();
+        alert("Perubahan berhasil disimpan!");
+      } catch (error) {
+        alert('Gagal mengupdate data alumni: ' + error.message);
+      }
+    }
+
+    async function deleteRow(index) {
+      if (confirm('Apakah Anda yakin ingin menghapus data alumni ini?')) {
+        try {
+          await alumni.deleteAlumni(data[index].uuid);
+          data.splice(index, 1);
+          applyFilters();
+          renderTable();
+          alert('Data alumni berhasil dihapus!');
+        } catch (error) {
+          alert('Gagal menghapus data alumni: ' + error.message);
+        }
+      }
+    }
+
+    // Event listener untuk rows per page select
+    rowsPerPageSelect.addEventListener('change', (e) => {
+      itemsPerPage = parseInt(e.target.value);
+      currentPage = 1;
+      renderTable();
+    });
+
+    document.getElementById('kembaliBtn').addEventListener('click', () => window.location.href = 'input_data_alumni.html');
+
+    // Initialize page
+    loadAlumniData();
+  </script>
+</body>
+</html>

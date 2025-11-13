@@ -1,0 +1,538 @@
+/* === Reset === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === Tampilan Umum === */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-image: url('img/fakultas-teknik-universitas-hasanuddin background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #333;
+}
+
+/* === Header === */
+.header {
+  background-color: #F5F5F5;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-unhas, .logo-ikatek {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.header-title {
+  color: #C41E3A;
+  font-size: 36px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.logout-btn {
+  background-color: transparent;
+  border: none;
+  color: #666;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  color: #C41E3A;
+  transform: scale(1.05);
+}
+
+.logout-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* === Navbar Horizontal === */
+.navbar {
+  background-color: #F5F5F5;
+  padding: 10px 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.navbar-btn {
+  background-color: rgba(139, 21, 56, 0.1);
+  border: none;
+  color: #8B1538;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  min-width: 150px;
+  justify-content: center;
+}
+
+.navbar-btn:hover {
+  background-color: rgba(139, 21, 56, 0.2);
+  transform: translateY(-2px);
+}
+
+.navbar-btn.active {
+  background-color: #8B1538;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-icon {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+/* === Layout Utama === */
+.main-container {
+  min-height: calc(100vh - 160px);
+}
+
+/* === Konten Utama === */
+.content {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 35px;
+}
+
+.content-icon {
+  width: 38px;
+  height: 38px;
+  filter: brightness(0) invert(1);
+}
+
+.content h2 {
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* === Info Admin Saat Ini === */
+.current-admin-info {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.current-admin-info h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.current-admin-info p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: white;
+}
+
+.current-admin-info strong {
+  color: #F5F5F5;
+}
+
+.current-admin-info span {
+  color: white;
+}
+
+/* === Salam Admin === */
+.greeting {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: linear-gradient(135deg, #8B1538, #B8405E);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 50;
+}
+
+.greeting h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+.greeting span {
+  color: #F5F5F5;
+}
+
+/* === Kotak Tabel === */
+.table-box {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 25px;
+  padding: 40px 50px;
+  max-width: 90%;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* === Tabel === */
+.table-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  overflow-y: auto;
+  max-height: 65vh;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile overrides adapted from Info_alumni.css to unify mobile layout */
+@media (max-width: 768px) {
+  .header { flex-direction: column; gap: 10px; padding: 12px 15px; }
+  .header-left { flex-direction: column; text-align: center; gap: 10px; }
+  .header-title { font-size: 28px; }
+  .logo-unhas, .logo-ikatek { height: 40px; }
+  .logout-btn { font-size: 14px; padding: 6px 12px; gap: 6px; }
+
+  .navbar { padding: 8px 10px; gap: 10px; flex-wrap: wrap; }
+  .navbar-btn { padding: 8px 12px; font-size: 14px; min-width: 120px; gap: 5px; }
+  .navbar-icon { width: 16px; height: 16px; }
+
+  .content { flex-direction: column; padding: 20px 10px; gap: 20px; align-items: stretch; }
+  .table-box { padding: 20px; max-width: 100%; width: 100%; }
+  .btn { width: 100%; padding: 12px 20px; font-size: 16px; min-width: auto; }
+
+  .filter-section, .filter-container { flex-direction: column; align-items: stretch; gap: 10px; }
+  .filter-section select, .filter-section input, .filter-container select, .filter-container input, .search-input {
+    width: 100%; height: 44px; font-size: 16px; padding: 10px 12px;
+  }
+
+  .table-container { max-height: 50vh; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 600px; }
+  th, td { font-size: 14px; padding: 10px; min-width: 100px; }
+
+  .sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding: 10px; justify-content: space-around; }
+  .sidebar-btn { min-width: 120px; padding: 12px 15px; font-size: 12px; justify-content: center; border-left: none; border-bottom: 3px solid transparent; }
+}
+
+@media (max-width: 480px) {
+  .header { padding: 10px 12px; }
+  .header-title { font-size: 24px; }
+  .logo-unhas, .logo-ikatek { height: 35px; }
+  .logout-btn { font-size: 12px; padding: 5px 10px; }
+
+  .navbar { padding: 6px 8px; gap: 8px; }
+  .navbar-btn { padding: 6px 10px; font-size: 12px; min-width: 100px; gap: 4px; }
+  .navbar-icon { width: 14px; height: 14px; }
+
+  .content { padding: 15px 8px; gap: 15px; }
+  .table-box { padding: 12px; }
+  .btn { padding: 10px 15px; font-size: 14px; }
+
+  .search-input, .filter-section select, .filter-section input { font-size: 16px; padding: 10px; }
+  .table-container { max-height: 40vh; -webkit-overflow-scrolling: touch; }
+  table { min-width: 500px; }
+  th, td { font-size: 12px; padding: 6px; min-width: 90px; }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th {
+  background-color: #8B1538;
+  color: white;
+  padding: 18px;
+  font-size: 20px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+tr:nth-child(even) td {
+  background-color: rgba(245, 245, 245, 0.9);
+}
+
+/* === Tombol Aksi di Tabel === */
+.aksi {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-edit,
+.btn-save,
+.btn-delete,
+.btn-cancel {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-edit {
+  background-color: #4a90e2;
+}
+
+.btn-edit:hover {
+  background-color: #357ABD;
+  transform: scale(1.05);
+}
+
+.btn-save {
+  background-color: #28a745;
+}
+
+.btn-save:hover {
+  background-color: #1f8a39;
+  transform: scale(1.05);
+}
+
+.btn-delete {
+  background-color: #c0392b;
+}
+
+.btn-delete:hover {
+  background-color: #a93226;
+  transform: scale(1.05);
+}
+
+/* === Tombol Bawah === */
+.action-buttons {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+
+.btn {
+  padding: 14px 40px;
+  border-radius: 15px;
+  border: none;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+}
+
+.btn-cancel {
+  background-color: #8B1538;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #A01B42;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-save {
+  background-color: #4a90e2;
+  color: rgb(255, 255, 255);
+}
+
+.btn-save:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-add {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #1f8a39;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #138496;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #8B1538;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #A01B42;
+}
+
+/* === Responsif === */
+@media (max-width: 1024px) {
+  .sidebar { width: 200px; }
+  .content { padding: 30px; }
+  .table-container { max-height: 60vh; }
+  th { font-size: 18px; padding: 15px; }
+  td { font-size: 16px; padding: 12px; }
+  .btn-edit, .btn-save, .btn-delete, .btn-cancel { font-size: 12px; padding: 5px 10px; }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 15px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .header-left { flex-direction: column; text-align: center; }
+  .header-title { font-size: 20px; }
+  .logo-unhas, .logo-ikatek { width: 40px; height: 40px; }
+  .logout-btn { padding: 6px 12px; font-size: 14px; }
+
+  .main-container { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px;
+    justify-content: space-around;
+  }
+  .sidebar-btn {
+    min-width: 120px;
+    padding: 12px 15px;
+    font-size: 12px;
+    justify-content: center;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  .sidebar-btn:hover, .sidebar-btn.active {
+    border-left: none;
+    border-bottom-color: white;
+  }
+  .sidebar-icon { width: 20px; height: 20px; }
+
+  .content { padding: 20px 15px; align-items: stretch; }
+  .content-header { margin-bottom: 20px; justify-content: center; }
+  .content h2 { font-size: 24px; }
+
+  .greeting {
+    position: static;
+    margin-bottom: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+    align-self: center;
+  }
+
+  .table-container {
+    max-height: 50vh;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table { min-width: 600px; }
+  th { font-size: 14px; padding: 10px; }
+  td { font-size: 14px; padding: 8px; }
+  .btn-edit, .btn-save, .btn-delete, .btn-cancel { font-size: 11px; padding: 4px 8px; }
+
+  .action-buttons { flex-direction: column; gap: 15px; margin-top: 20px; }
+  .btn { width: 100%; padding: 12px 20px; font-size: 14px; min-width: auto; }
+}
+
+@media (max-width: 480px) {
+  .header { padding: 10px; }
+  .header-title { font-size: 18px; }
+  .logo-unhas, .logo-ikatek { width: 35px; height: 35px; }
+  .logout-btn { font-size: 13px; padding: 5px 10px; }
+
+  .sidebar { padding: 8px; }
+  .sidebar-btn { min-width: 100px; padding: 10px; font-size: 11px; }
+  .sidebar-icon { width: 18px; height: 18px; }
+
+  .content { padding: 15px 10px; }
+  .content-header { gap: 10px; }
+  .content-icon { width: 30px; height: 30px; }
+  .content h2 { font-size: 20px; }
+
+  .greeting { padding: 6px 10px; font-size: 14px; }
+
+  .table-container { max-height: 40vh; }
+  table { min-width: 500px; }
+  th { font-size: 12px; padding: 8px; }
+  td { font-size: 12px; padding: 6px; }
+  .btn-edit, .btn-save, .btn-delete, .btn-cancel { font-size: 10px; padding: 3px 6px; }
+
+  .action-buttons { gap: 12px; }
+  .btn { padding: 10px 15px; font-size: 13px; }
+}

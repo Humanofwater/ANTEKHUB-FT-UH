@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - ANTEKHUB FT-UH</title>
+    <link rel="stylesheet" href="style.css" /> 
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+        <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+        <h1 class="header-title">ANTEKHUB FT-UH</h1>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="login-container">
+        <div class="login-box">
+          <img src="img/logo tidak pecah.png" alt="Logo UNHAS" class="logo-main" />
+
+          <h2>ANTEKHUB FT-UH</h2>
+          <p class="subtitle">Adaptive Collaborative</p>
+
+          <form id="loginForm" action="#" method="POST">
+            <div class="input-group">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Username"
+                required
+              />
+              <img src="img/Person.png" alt="User Icon" class="icon" />
+            </div>
+
+            <div class="input-group">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Password"
+                required
+              />
+              <img
+                src="img/Vector.png"
+                alt="Show Password"
+                class="icon toggle-password"
+                id="togglePassword"
+              />
+            </div>
+
+            <button type="submit" class="btn login">Login</button>
+           
+          </form>
+
+          <div class="logos">
+            <img src="img/logo tidak pecah.png" alt="Logo UNHAS" />
+            <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo FT-UH" />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Base URL for the server
+      const BASE_URL = 'http://localhost:3000/api';
+
+      // Helper function to make HTTP requests
+      async function apiRequest(method, endpoint, data = null, includeAuth = true) {
+        const url = `${BASE_URL}${endpoint}`;
+        const headers = {
+          'Content-Type': 'application/json',
+        };
+
+        if (includeAuth) {
+          const token = localStorage.getItem('authToken');
+          if (token) {
+            headers.Authorization = `Bearer ${token}`;
+          }
+        }
+
+        const config = {
+          method,
+          headers,
+        };
+
+        if (data && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+          config.body = JSON.stringify(data);
+        }
+
+        try {
+          const response = await fetch(url, config);
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+          }
+
+          return result;
+        } catch (error) {
+          console.error(`API request failed: ${method} ${endpoint}`, error);
+          throw error;
+        }
+      }
+
+      // Auth module
+      const auth = {
+        async login(username, password) {
+          try {
+            const result = await apiRequest('POST', '/auth/admin/login', { username, password }, false);
+
+            if (result.token && result.admin) {
+              localStorage.setItem('authToken', result.token);
+              localStorage.setItem('currentUser', JSON.stringify(result.admin));
+            }
+
+            return result;
+          } catch (error) {
+            throw error;
+          }
+        },
+
+        logout() {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('currentUser');
+        }
+      };
+
+      // Toggle password visibility
+      const togglePassword = document.getElementById("togglePassword");
+      const passwordInput = document.getElementById("password");
+
+      togglePassword.addEventListener("click", () => {
+        const type =
+          passwordInput.getAttribute("type") === "password"
+            ? "text"
+            : "password";
+        passwordInput.setAttribute("type", type);
+        togglePassword.classList.toggle("active");
+      });
+
+      // Login functionality
+      const form = document.getElementById("loginForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const user = document.getElementById("username").value;
+        const pass = document.getElementById("password").value;
+
+        try {
+          const result = await auth.login(user, pass);
+          alert("Login Berhasil! Selamat datang, " + user);
+          window.location.href = "menu_utama.html";
+        } catch (error) {
+          alert("Login gagal: " + error.message);
+        }
+      });
+
+      // Check if already logged in
+      window.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('authToken');
+        const currentUser = localStorage.getItem('currentUser');
+        if (token && currentUser) {
+          window.location.href = "menu_utama.html";
+        }
+      });
+    </script>
+  </body>
+</html>

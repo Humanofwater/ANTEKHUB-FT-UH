@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Info Alumni - ANTEKHUB FT-UH</title>
+  <link rel="stylesheet" href="Info_alumni.css" />
+  <style>
+    /* Spinner Loading */
+    .loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+      color: #444;
+      font-size: 1.1em;
+    }
+
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #8B1538;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas" />
+      <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek" />
+      <h1 class="header-title">ANTEKHUB FT-UH</h1>
+    </div>
+    <button class="logout-btn" id="logoutBtn">
+      <img src="img/Logout.png" alt="Logout Icon" class="logout-icon" /> LOGOUT
+    </button>
+  </header>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <button class="navbar-btn" id="menuUtamaBtn">
+      <img src="img/menu.png" alt="Menu Icon" class="navbar-icon" /> MENU UTAMA
+    </button>
+    <button class="navbar-btn" id="inputDataBtn">
+      <img src="img/input data.png" alt="Input Icon" class="navbar-icon" /> Input Data Alumni
+    </button>
+    <button class="navbar-btn" id="dataAlumniBtn">
+      <img src="img/data alumni.png" alt="Data Icon" class="navbar-icon" /> DATA ALUMNI
+    </button>
+    <button class="navbar-btn active" id="infoAlumniBtn">
+      <img src="img/info alumni.png" alt="Info Icon" class="navbar-icon" /> INFO ALUMNI
+    </button>
+    <button class="navbar-btn" id="akunAdminBtn">
+      <img src="img/akun admin.png" alt="Admin Icon" class="navbar-icon" /> AKUN ADMIN
+    </button>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-container">
+    <main class="content">
+      <!-- Form Upload -->
+      <div class="upload-container">
+        <div class="type-container">
+          <label for="typeSelect">Jenis Info:</label>
+          <select id="typeSelect">
+            <option value="event">Event</option>
+            <option value="berita">Berita</option>
+            <option value="lowongan">Lowongan Kerja</option>
+          </select>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+          <p class="upload-text">Pastikan file dalam format JPG, PNG, atau JPEG</p>
+          <input type="file" id="fileInput" accept=".jpg,.png,.jpeg" style="display:none;">
+          <button class="choose-file-btn" id="chooseFileBtn">Pilih File Gambar</button>
+          <p class="file-name" id="fileName"></p>
+          <div id="imagePreview"></div>
+        </div>
+
+        <div class="title-container">
+          <input type="text" id="titleInput" placeholder="Masukkan judul kegiatan..." />
+        </div>
+
+        <div class="description-container">
+          <textarea id="descriptionTextarea" placeholder="Masukkan deskripsi info alumni..."></textarea>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-cancel" id="batalBtn">Batal ✕</button>
+          <button class="btn btn-save" id="simpanBtn">Simpan ✓</button>
+        </div>
+      </div>
+
+      <!-- Tampilan Info -->
+      <div class="display-container">
+        <h3>Info Alumni yang Diupload</h3>
+        <div class="filter-container">
+          <select id="filterType">
+            <option value="">Semua Jenis</option>
+            <option value="event">Event</option>
+            <option value="berita">Berita</option>
+            <option value="lowongan">Lowongan Kerja</option>
+          </select>
+          <input type="text" id="searchTitle" placeholder="Cari berdasarkan judul..." />
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingContainer" class="loading">
+          <div class="spinner"></div>
+          <p>Memuat data info alumni...</p>
+        </div>
+
+        <div id="allInfoList" class="info-list">
+          <!-- Cards will be rendered here -->
+        </div>
+
+        <!-- Modal for detailed view -->
+        <div id="infoModal" class="modal">
+          <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-image-container">
+              <img id="modalImage" src="" alt="Info Image" class="modal-image">
+              <div id="modalBadge" class="modal-badge"></div>
+            </div>
+            <div class="modal-text">
+              <h2 id="modalTitle"></h2>
+              <p id="modalDescription"></p>
+              <small id="modalDetails"></small>
+            </div>
+          </div>
+        </div>
+        <div class="info-nav">
+          <button class="info-nav-btn" id="prevInfoBtn">Lihat Info Sebelumnya</button>
+          <button class="info-nav-btn" id="nextInfoBtn">Lihat Info Berikutnya</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+  const fileInput = document.getElementById('fileInput');
+  const chooseFileBtn = document.getElementById('chooseFileBtn');
+  const fileName = document.getElementById('fileName');
+  const imagePreview = document.getElementById('imagePreview');
+  const titleInput = document.getElementById('titleInput');
+  const descriptionTextarea = document.getElementById('descriptionTextarea');
+  const typeSelect = document.getElementById('typeSelect');
+  const simpanBtn = document.getElementById('simpanBtn');
+  const batalBtn = document.getElementById('batalBtn');
+  const filterType = document.getElementById('filterType');
+  const searchTitle = document.getElementById('searchTitle');
+  const allInfoList = document.getElementById('allInfoList');
+  const loadingContainer = document.getElementById('loadingContainer');
+  let editingId = null;
+
+  const DEFAULT_IMAGE_URL = 'https://via.placeholder.com/400x250?text=No+Image';
+
+  // === Cek Login ===
+  const token = localStorage.getItem('authToken');
+  const currentUserData = localStorage.getItem('currentUser');
+  if (!token || !currentUserData) {
+    alert('Silakan login terlebih dahulu.');
+    window.location.href = 'index.html';
+  }
+
+  const currentUser = JSON.parse(currentUserData);
+  const userAdminId = currentUser.id ? Number(currentUser.id) : 1;
+  let allInfosGlobal = [];
+
+  // === Load data info alumni ===
+  async function loadInfoData() {
+    loadingContainer.style.display = 'flex';
+    allInfoList.style.display = 'none';
+    allInfoList.innerHTML = '';
+
+    try {
+      const result = await window.API.info.getAllInfo();
+      const allInfos = result.data || [];
+
+      if (allInfos.length === 0) {
+        allInfoList.innerHTML = `<p style="text-align:center; color:#666;">ℹ️ Belum ada info alumni.</p>`;
+      } else {
+        const mappedInfos = allInfos.map(info => {
+          let imageUrl = info.metadata?.webContentLink || info.metadata?.webViewLink || info.info_image_url;
+
+          if (imageUrl) {
+            const match = imageUrl.match(/\/d\/([^/]+)/);
+            if (match && match[1]) imageUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+            else if (imageUrl.includes('id=')) {
+              const fileId = new URL(imageUrl).searchParams.get('id');
+              if (fileId) imageUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+            }
+          } else imageUrl = DEFAULT_IMAGE_URL;
+
+          return {
+            id: info.uuid,
+            title: info.title,
+            description: info.content,
+            type: info.type_info?.toLowerCase().split(' ')[0] || 'lainnya',
+            image: imageUrl,
+            createdAt: info.created_at,
+            uploadedBy: info.admin?.username || currentUser.username || 'Unknown',
+          };
+        });
+
+        allInfosGlobal = mappedInfos;
+        renderInfos(mappedInfos);
+      }
+    } catch (error) {
+      console.error('❌ Gagal memuat data info:', error);
+      allInfoList.innerHTML = `
+        <p style="color:red; text-align:center;">❌ Gagal memuat data dari server.<br>${error.message}</p>`;
+    } finally {
+      loadingContainer.style.display = 'none';
+      allInfoList.style.display = 'grid';
+    }
+  }
+
+  // === Render ke tampilan ===
+  function renderInfos(allInfos) {
+    const selectedType = filterType.value;
+    const searchTerm = searchTitle.value.toLowerCase();
+    const filtered = allInfos.filter(i =>
+      (!selectedType || i.type === selectedType) &&
+      (!searchTerm || i.title.toLowerCase().includes(searchTerm))
+    );
+
+    // Pagination setup
+    const itemsPerPage = 4; // Show 4 cards per page
+    let currentPage = parseInt(localStorage.getItem('currentInfoPage')) || 1;
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+    // Adjust current page if needed
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    // Get current page items
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = filtered.slice(startIndex, endIndex);
+
+    allInfoList.innerHTML = filtered.length
+      ? currentItems.map(info => `
+          <div class="info-card" onclick="openModal('${info.id}')">
+            <div class="info-image-container">
+              <img src="${info.image || DEFAULT_IMAGE_URL}" alt="${info.title}" class="info-image"
+                onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
+              <div class="info-badge ${info.type}">${info.type.charAt(0).toUpperCase() + info.type.slice(1)}</div>
+            </div>
+            <div class="info-content">
+              <h4>${info.title}</h4>
+              <p class="info-description">${info.description.length > 200 ? info.description.slice(0,200) + '...' : info.description}</p>
+              ${info.description.length > 200 ? `<button class="read-more-btn" onclick="toggleDescription(this); event.stopPropagation();">Baca Selengkapnya</button>` : ''}
+              <small>Diupload: ${new Date(info.createdAt).toLocaleDateString('id-ID')} oleh ${info.uploadedBy}</small>
+              <div class="card-buttons">
+                <button class="btn edit-btn" onclick="editInfo('${info.id}'); event.stopPropagation();"><span class="btn-icon">✏️</span> Edit</button>
+                <button class="btn delete-btn" onclick="deleteInfo('${info.id}'); event.stopPropagation();"><span class="btn-icon">🗑️</span> Hapus</button>
+              </div>
+            </div>
+          </div>
+        `).join('')
+      : '<p style="text-align:center;">Tidak ada info ditemukan.</p>';
+
+    // Update navigation buttons
+    const prevBtn = document.getElementById('prevInfoBtn');
+    const nextBtn = document.getElementById('nextInfoBtn');
+
+    // Hide previous button if on first page
+    prevBtn.style.display = currentPage === 1 ? 'none' : 'inline-block';
+    nextBtn.disabled = currentPage === totalPages;
+
+    // Show/hide navigation based on total pages
+    const infoNav = document.querySelector('.info-nav');
+    infoNav.style.display = totalPages > 1 ? 'flex' : 'none';
+  }
+
+  // Add event listeners for navigation
+  document.getElementById('prevInfoBtn').addEventListener('click', () => {
+    const currentPage = parseInt(localStorage.getItem('currentInfoPage')) || 1;
+    if (currentPage > 1) {
+      localStorage.setItem('currentInfoPage', currentPage - 1);
+      renderInfos(allInfosGlobal);
+    }
+  });
+
+  document.getElementById('nextInfoBtn').addEventListener('click', () => {
+    const currentPage = parseInt(localStorage.getItem('currentInfoPage')) || 1;
+    const itemsPerPage = 4;
+    const totalPages = Math.ceil(allInfosGlobal.length / itemsPerPage);
+    if (currentPage < totalPages) {
+      localStorage.setItem('currentInfoPage', currentPage + 1);
+      renderInfos(allInfosGlobal);
+    }
+  });
+
+  // Add event listeners for filter and search
+  filterType.addEventListener('change', () => {
+    localStorage.setItem('currentInfoPage', 1);
+    renderInfos(allInfosGlobal);
+  });
+
+  searchTitle.addEventListener('input', () => {
+    localStorage.setItem('currentInfoPage', 1);
+    renderInfos(allInfosGlobal);
+  });
+
+  // === Fungsi Lain: Edit, Hapus, Upload, Logout (sama seperti punyamu) ===
+  async function editInfo(id) {
+    const info = allInfosGlobal.find(i => i.id === id);
+    if (!info) return alert('Data info tidak ditemukan.');
+
+    titleInput.value = info.title;
+    descriptionTextarea.value = info.description;
+    typeSelect.value = info.type.toLowerCase();
+    imagePreview.innerHTML = `<img src="${info.image}" style="max-width:100px;max-height:100px;">`;
+    editingId = id;
+    simpanBtn.textContent = 'Simpan Perubahan';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function deleteInfo(id) {
+    if (!confirm('Yakin ingin menghapus info ini?')) return;
+    try {
+      await window.API.info.deleteInfo(id);
+      alert('Info berhasil dihapus.');
+      loadInfoData();
+    } catch (error) {
+      alert('Gagal menghapus info: ' + error.message);
+    }
+  }
+
+  chooseFileBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['jpg','jpeg','png'].includes(ext)) {
+      alert('Format file tidak valid.');
+      fileInput.value = '';
+      return;
+    }
+    fileName.textContent = `File terpilih: ${file.name}`;
+    const reader = new FileReader();
+    reader.onload = e => imagePreview.innerHTML = `<img src="${e.target.result}" style="max-width:100px;max-height:100px;">`;
+    reader.readAsDataURL(file);
+  });
+
+  simpanBtn.addEventListener('click', async () => {
+    try {
+      const title = titleInput.value.trim();
+      const description = descriptionTextarea.value.trim();
+      const type = typeSelect.value;
+      const file = fileInput.files[0];
+      if (!title || !description) return alert('Judul dan deskripsi wajib diisi.');
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', description);
+      formData.append('type_info', type === 'event' ? 'Event' : type === 'berita' ? 'Berita' : 'Lowongan Pekerjaan');
+      formData.append('user_admin_id', userAdminId);
+      if (file) formData.append('image', file);
+
+      if (editingId) {
+        await window.API.info.updateInfo(editingId, formData);
+        alert('Info berhasil diperbarui!');
+        editingId = null;
+        simpanBtn.textContent = 'Simpan ✓';
+      } else {
+        await window.API.info.createInfo(formData);
+        alert('Info berhasil disimpan!');
+      }
+
+      titleInput.value = '';
+      descriptionTextarea.value = '';
+      imagePreview.innerHTML = '';
+      fileName.textContent = '';
+      fileInput.value = '';
+      loadInfoData();
+    } catch (error) {
+      alert('Gagal menyimpan info: ' + error.message);
+    }
+  });
+
+  batalBtn.addEventListener('click', () => {
+    titleInput.value = '';
+    descriptionTextarea.value = '';
+    imagePreview.innerHTML = '';
+    fileInput.value = '';
+    fileName.textContent = '';
+    editingId = null;
+    simpanBtn.textContent = 'Simpan ✓';
+  });
+
+  // === Navbar & Logout ===
+  document.getElementById('inputDataBtn').onclick = () => location.href = 'input_data_alumni.html';
+  document.getElementById('menuUtamaBtn').onclick = () => location.href = 'menu_utama.html';
+  document.getElementById('dataAlumniBtn').onclick = () => location.href = 'data_alumni.html';
+  document.getElementById('infoAlumniBtn').onclick = () => location.href = 'Info_alumni.html';
+  document.getElementById('akunAdminBtn').onclick = () => location.href = 'data_admin.html';
+  document.getElementById('logoutBtn').onclick = () => {
+    if (confirm('Yakin ingin logout?')) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+      location.href = 'index.html';
+    }
+  };
+
+  // === Toggle description ===
+  function toggleDescription(btn) {
+    const desc = btn.previousElementSibling;
+    const fullText = desc.dataset.fullText || desc.textContent.replace('...', '');
+    if (desc.textContent.endsWith('...')) {
+      desc.dataset.fullText = desc.textContent;
+      desc.textContent = fullText;
+      btn.textContent = 'Baca Lebih Sedikit';
+    } else {
+      desc.textContent = fullText.slice(0, 200) + '...';
+      btn.textContent = 'Baca Selengkapnya';
+    }
+  }
+
+  // === Modal functions ===
+  function openModal(id) {
+    const info = allInfosGlobal.find(i => i.id === id);
+    if (!info) return;
+
+    document.getElementById('modalImage').src = info.image || DEFAULT_IMAGE_URL;
+    document.getElementById('modalTitle').textContent = info.title;
+    document.getElementById('modalDescription').textContent = info.description;
+    document.getElementById('modalDetails').textContent = `Diupload: ${new Date(info.createdAt).toLocaleDateString('id-ID')} oleh ${info.uploadedBy}`;
+    document.getElementById('modalBadge').textContent = info.type.charAt(0).toUpperCase() + info.type.slice(1);
+    document.getElementById('modalBadge').className = `modal-badge ${info.type}`;
+
+    document.getElementById('infoModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('infoModal').style.display = 'none';
+  }
+
+  // Close modal when clicking outside
+  window.onclick = function(event) {
+    const modal = document.getElementById('infoModal');
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
+
+  // Close modal with X button
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('close-modal')) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', loadInfoData);
+  </script>
+</body>
+</html>

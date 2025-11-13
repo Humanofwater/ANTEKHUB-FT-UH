@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Admin - ANTEKHUB FT-UH</title>
+  <link rel="stylesheet" href="data_admin.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <img src="img/logo tidak pecah.png" alt="Logo Unhas" class="logo-unhas">
+      <img src="img/ikatek_terbaru_tanpa_blur-removebg-preview.png" alt="Logo IKATEK" class="logo-ikatek">
+      <h1 class="header-title">ANTEKHUB FT-UH</h1>
+    </div>
+    <button class="logout-btn" id="logoutBtn">
+      <img src="img/Logout.png" alt="Logout Icon" class="logout-icon">
+      LOGOUT
+    </button>
+  </header>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Navbar Horizontal -->
+    <nav class="navbar">
+      <button class="navbar-btn" id="menuUtamaBtn">
+        <img src="img/menu.png" alt="Menu Icon" class="navbar-icon">
+        MENU UTAMA
+      </button>
+      <button class="navbar-btn" id="inputDataBtn">
+        <img src="img/input data.png" alt="Input Icon" class="navbar-icon">
+        Input Data Alumni
+      </button>
+      <button class="navbar-btn" id="dataAlumniBtn">
+        <img src="img/data alumni.png" alt="Data Icon" class="navbar-icon">
+        DATA ALUMNI
+      </button>
+      <button class="navbar-btn" id="infoAlumniBtn">
+        <img src="img/info alumni.png" alt="Info Icon" class="navbar-icon">
+        INFO ALUMNI
+      </button>
+      <button class="navbar-btn active" id="akunAdminBtn">
+        AKUN ADMIN
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="content-header">
+        <h2>DATA ADMIN</h2>
+      </div>
+
+      <div class="greeting">
+        <h3>Halo, <span id="greetingUsername"></span>👋</h3>  <!-- Perbaiki: Hapus </span> ekstra -->
+      </div>
+
+      <div class="table-container">
+        <table id="tabelAdmin" border="1" cellpadding="8" cellspacing="0">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-add" id="tambahAkunBtn">Tambah Akun</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Global variables. 
+    let adminData = [];
+    let currentUser = null;
+    let isSuperAdmin = false;
+    let tableHead, tableBody, greetingUsername;
+    let apiInitialized = false;
+
+    // Load admin data from API
+    async function loadAdminData() {
+      // Validasi login
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        alert('Sesi Anda telah berakhir. Silakan login kembali.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      if (!window.API || !window.API.userAdmin) {
+        console.error('API tidak tersedia. Pastikan api.js dimuat dengan benar.');
+        alert('Terjadi kesalahan sistem. Mencoba memuat data dari cache.');
+        loadFromLocalStorage();
+        return;
+      }
+
+      try {
+        const result = await window.API.userAdmin.getAllAdmins();
+        if (!result || result.error) {
+          throw new Error(result?.message || 'Gagal memuat data admin');
+        }
+        
+        adminData = result.data || [];
+        localStorage.setItem('adminAccounts', JSON.stringify(adminData));
+        renderTable();
+        
+        console.log('✅ Data admin berhasil dimuat:', {
+          totalData: adminData.length,
+          roles: [...new Set(adminData.map(a => a.role))]
+        });
+      } catch (error) {
+        console.error('❌ Gagal memuat data admin:', error);
+        
+        if (error.message.includes('login') || error.message.includes('unauthorized')) {
+          alert('Sesi Anda telah berakhir. Silakan login kembali.');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        alert('Gagal memuat data terbaru. Memuat data dari cache.');
+        loadFromLocalStorage();
+      }
+    }
+
+    function loadFromLocalStorage() {
+      const storedData = localStorage.getItem('adminAccounts');
+      if (storedData) {
+        try {
+          adminData = JSON.parse(storedData);
+          renderTable();
+          console.log('📁 Memuat data dari cache:', adminData.length, 'item');
+        } catch (e) {
+          console.error('❌ Gagal memuat data dari cache:', e);
+          adminData = [];
+          renderTable();
+        }
+      } else {
+        console.log('ℹ️ Tidak ada data di cache');
+        adminData = [];
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      adminData.forEach(row => {
+        if (!row.role) row.role = 'Admin';
+        if (!row.nomor_telepon) row.nomor_telepon = '';
+      });
+      localStorage.setItem('adminAccounts', JSON.stringify(adminData));
+
+      if (adminData.length > 0) {
+        const headers = ['Nama', 'Username', 'No. Telepon', 'Role'];
+        if (isSuperAdmin) headers.push('Aksi');
+        let headerHTML = '<tr>';
+        headers.forEach(h => headerHTML += `<th>${h}</th>`);
+        headerHTML += '</tr>';
+        tableHead.innerHTML = headerHTML;
+
+        let bodyHTML = '';
+        adminData.forEach((row, index) => {
+          bodyHTML += '<tr>';
+          bodyHTML += `<td>${row.nama || ''}</td>`;
+          bodyHTML += `<td contenteditable="false">${row.username || ''}</td>`;
+          bodyHTML += `<td contenteditable="false">${row.nomor_telepon || ''}</td>`;
+          bodyHTML += `<td>${row.role}</td>`;
+          if (isSuperAdmin) {
+            bodyHTML += `
+              <td class="aksi">
+                <button class="btn-edit" data-index="${index}">Edit</button>
+                <button class="btn-delete" data-index="${index}">Hapus</button>
+              </td>
+            `;
+          }
+          bodyHTML += '</tr>';
+        });
+        tableBody.innerHTML = bodyHTML;
+
+        // Attach event listeners after rendering
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            editRow(index, this);
+          });
+        });
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            deleteRow(index);
+          });
+        });
+      } else {
+        tableHead.innerHTML = '';
+        const colspan = isSuperAdmin ? 5 : 4;
+        tableBody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center;">Tidak ada data admin yang tersimpan.</td></tr>`;
+      }
+    }
+
+    async function editRow(index, button) {
+      // Validasi role
+      if (currentUser.role !== 'Super Admin') {
+        alert('Maaf, hanya Super Admin yang dapat mengedit akun.');
+        return;
+      }
+
+      // Validasi token
+      if (!localStorage.getItem('authToken')) {
+        alert('Sesi Anda telah berakhir. Silakan login kembali.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const row = button.closest('tr');
+      const cells = row.querySelectorAll('td:not(.aksi)');
+
+      if (button.textContent === "Edit") {
+        // Mode edit
+        cells[1].setAttribute('contenteditable', 'true');
+        cells[2].setAttribute('contenteditable', 'true');
+        cells[1].focus();
+        
+        button.textContent = "Simpan";
+        button.classList.remove("btn-edit");
+        button.classList.add("btn-save");
+        
+        // Simpan data asli untuk pembatalan
+        row.dataset.originalUsername = cells[1].textContent;
+        row.dataset.originalPhone = cells[2].textContent;
+        
+        // Tambah tombol batal
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = "Batal";
+        cancelBtn.className = "btn-cancel";
+        cancelBtn.onclick = () => {
+          cells[1].textContent = row.dataset.originalUsername;
+          cells[2].textContent = row.dataset.originalPhone;
+          cells[1].setAttribute('contenteditable', 'false');
+          cells[2].setAttribute('contenteditable', 'false');
+          button.textContent = "Edit";
+          button.classList.remove("btn-save");
+          button.classList.add("btn-edit");
+          cancelBtn.remove();
+        };
+        button.parentNode.insertBefore(cancelBtn, button.nextSibling);
+      } else {
+        // Mode simpan
+        if (!window.API?.userAdmin) {
+          alert('Sistem tidak tersedia. Silakan coba lagi nanti.');
+          return;
+        }
+
+        // Validasi input
+        const username = cells[1].textContent.trim();
+        const phone = cells[2].textContent.trim();
+
+        if (!username) {
+          alert('Username tidak boleh kosong');
+          cells[1].focus();
+          return;
+        }
+
+        if (phone && !/^[0-9+()-\s]{10,15}$/.test(phone)) {
+          alert('Format nomor telepon tidak valid');
+          cells[2].focus();
+          return;
+        }
+
+        try {
+          button.disabled = true;
+          button.textContent = "Menyimpan...";
+
+          const updatedData = { username, nomor_telepon: phone };
+          const result = await window.API.userAdmin.updateAdmin(adminData[index].uuid, updatedData);
+
+          if (result && !result.error) {
+            adminData[index].username = username;
+            adminData[index].nomor_telepon = phone;
+            
+            cells[1].setAttribute('contenteditable', 'false');
+            cells[2].setAttribute('contenteditable', 'false');
+            
+            button.textContent = "Edit";
+            button.classList.remove("btn-save");
+            button.classList.add("btn-edit");
+            button.disabled = false;
+
+            // Hapus tombol batal
+            const cancelBtn = button.parentNode.querySelector('.btn-cancel');
+            if (cancelBtn) cancelBtn.remove();
+
+            localStorage.setItem('adminAccounts', JSON.stringify(adminData));
+            alert("✅ Perubahan berhasil disimpan!");
+          } else {
+            throw new Error(result?.message || 'Gagal menyimpan perubahan');
+          }
+        } catch (error) {
+          console.error('❌ Gagal update:', error);
+          alert('Gagal menyimpan: ' + error.message);
+          button.disabled = false;
+          button.textContent = "Simpan";
+        }
+      }
+    }
+
+    async function deleteRow(index) {
+      if (currentUser.role !== 'Super Admin') {
+        alert('Hanya Super Admin yang bisa menghapus akun.');
+        return;
+      }
+      if (confirm('Apakah Anda yakin ingin menghapus akun ini?')) {
+        if (!window.API || !window.API.userAdmin) {
+          alert('Error: API tidak tersedia. Tidak bisa menghapus akun.');
+          return;
+        }
+        try {
+          await window.API.userAdmin.deleteAdmin(adminData[index].uuid);
+          adminData.splice(index, 1);
+          renderTable();
+          alert('Akun berhasil dihapus!');
+        } catch (error) {
+          alert('Gagal menghapus admin: ' + error.message);
+        }
+      }
+    }
+
+    // Fungsi untuk memuat API
+    function loadAPI() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'api.js';
+        script.onload = () => {
+          console.log('✅ API berhasil dimuat');
+          resolve();
+        };
+        script.onerror = () => {
+          console.error('❌ Gagal memuat API');
+          reject(new Error('Gagal memuat API'));
+        };
+        document.body.appendChild(script);
+      });
+    }
+
+    // Fungsi inisialisasi aplikasi
+    async function initializeApp() {
+      try {
+        // Tunggu API tersedia
+        await loadAPI();
+        
+        // Periksa login
+        const token = localStorage.getItem('authToken');
+        const userData = localStorage.getItem('currentUser');
+        
+        if (!token || !userData) {
+          throw new Error('Sesi login tidak valid');
+        }
+
+        // Set user data
+        currentUser = JSON.parse(userData);
+        isSuperAdmin = currentUser.role === 'Super Admin';
+        
+        // Initialize UI
+        tableHead = document.getElementById('tableHead');
+        tableBody = document.getElementById('tableBody');
+        greetingUsername = document.getElementById('greetingUsername');
+        greetingUsername.textContent = currentUser.username;
+
+        if (!isSuperAdmin) {
+          document.getElementById('tambahAkunBtn').style.display = 'none';
+        }
+
+        // Setup event listeners
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+          if (confirm('Apakah Anda yakin ingin logout?')) {
+            if (window.API?.auth) {
+              window.API.auth.logout();
+            } else {
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('currentUser');
+            }
+            window.location.href = 'index.html';
+          }
+        });
+
+        // Setup navigation
+        document.getElementById('inputDataBtn').addEventListener('click', () => window.location.href = 'input_data_alumni.html');
+        document.getElementById('menuUtamaBtn').addEventListener('click', () => window.location.href = 'menu_utama.html');
+        document.getElementById('dataAlumniBtn').addEventListener('click', () => window.location.href = 'data_alumni.html');
+        document.getElementById('infoAlumniBtn').addEventListener('click', () => window.location.href = 'Info_alumni.html');
+        document.getElementById('akunAdminBtn').addEventListener('click', () => alert('Anda sudah berada di halaman Data Admin'));
+        document.getElementById('tambahAkunBtn').addEventListener('click', () => window.location.href = 'Tambah_akun.html');
+
+        // Load data
+        await loadAdminData();
+
+      } catch (error) {
+        console.error('❌ Gagal inisialisasi:', error);
+        if (error.message.includes('login')) {
+          alert('Sesi Anda telah berakhir. Silakan login kembali.');
+          window.location.href = 'index.html';
+        } else {
+          alert('Gagal memulai aplikasi: ' + error.message);
+        }
+      }
+    }
+
+    // Start the application when DOM is ready
+    document.addEventListener('DOMContentLoaded', initializeApp);
+  </script>
+</body>
+</html>
