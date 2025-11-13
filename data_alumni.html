@@ -491,19 +491,17 @@
         // Transform frontend data back to backend format
         const backendData = {
           nama: updatedData.Nama,
-          riwayat_pendidikan: [{
-            nim: updatedData.NIM,
-            program_studi: updatedData['Program Studi'],
-            strata: updatedData.Strata,
-            tahun_masuk: parseInt(updatedData['Tahun Masuk']) || null,
-            tanggal_lulus: updatedData['Tanggal Lulus'] ? new Date(updatedData['Tanggal Lulus']).toISOString().split('T')[0] : null,
-            ipk: parseFloat(updatedData.IPK) || null,
-            predikat_kelulusan: updatedData['Predikat Kelulusan']
-          }]
+          tempat_lahir: updatedData['Tempat Lahir'],
+          tanggal_lahir: updatedData['Tanggal Lahir'] ? new Date(updatedData['Tanggal Lahir']).toISOString().split('T')[0] : null,
+          agama: updatedData.Agama,
+          alamat: updatedData.Alamat,
+          no_telp: updatedData['No Telp']
         };
         await alumni.updateAlumni(data[index].uuid, backendData);
         // Update local data
         Object.assign(data[index], updatedData);
+        // Update tanggal update dengan tanggal sekarang
+        data[index].update = new Date().toISOString().split('T')[0];
         // Re-filter data
         applyFilters();
         renderTable();
